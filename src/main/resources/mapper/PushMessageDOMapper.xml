@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uio.monitor.mapper.PushMessageDOMapper">
+  <resultMap id="BaseResultMap" type="com.uio.monitor.entity.PushMessageDO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="gmt_create" jdbcType="DATE" property="gmtCreate" />
+    <result column="gmt_modify" jdbcType="DATE" property="gmtModify" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="modifier" jdbcType="VARCHAR" property="modifier" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+    <result column="push_date_time" jdbcType="DATE" property="pushDateTime" />
+    <result column="state" jdbcType="VARCHAR" property="state" />
+    <result column="push_way" jdbcType="VARCHAR" property="pushWay" />
+    <result column="receiver" jdbcType="VARCHAR" property="receiver" />
+    <result column="message" jdbcType="VARCHAR" property="message" />
+    <result column="push_cycle" jdbcType="INTEGER" property="pushCycle" />
+    <result column="cycle_unit" jdbcType="VARCHAR" property="cycleUnit" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, gmt_create, gmt_modify, creator, modifier, deleted, push_date_time, state, push_way, 
+    receiver, message, push_cycle, cycle_unit
+  </sql>
+  <select id="selectByExample" parameterType="com.uio.monitor.entity.PushMessageDOExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from tb_push_message
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_push_message
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tb_push_message
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.uio.monitor.entity.PushMessageDOExample">
+    delete from tb_push_message
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.uio.monitor.entity.PushMessageDO">
+    insert into tb_push_message (id, gmt_create, gmt_modify, 
+      creator, modifier, deleted, 
+      push_date_time, state, push_way, 
+      receiver, message, push_cycle, 
+      cycle_unit)
+    values (#{id,jdbcType=BIGINT}, #{gmtCreate,jdbcType=DATE}, #{gmtModify,jdbcType=DATE}, 
+      #{creator,jdbcType=VARCHAR}, #{modifier,jdbcType=VARCHAR}, #{deleted,jdbcType=BIT}, 
+      #{pushDateTime,jdbcType=DATE}, #{state,jdbcType=VARCHAR}, #{pushWay,jdbcType=VARCHAR}, 
+      #{receiver,jdbcType=VARCHAR}, #{message,jdbcType=VARCHAR}, #{pushCycle,jdbcType=INTEGER}, 
+      #{cycleUnit,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.uio.monitor.entity.PushMessageDO">
+    insert into tb_push_message
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="gmtCreate != null">
+        gmt_create,
+      </if>
+      <if test="gmtModify != null">
+        gmt_modify,
+      </if>
+      <if test="creator != null">
+        creator,
+      </if>
+      <if test="modifier != null">
+        modifier,
+      </if>
+      <if test="deleted != null">
+        deleted,
+      </if>
+      <if test="pushDateTime != null">
+        push_date_time,
+      </if>
+      <if test="state != null">
+        state,
+      </if>
+      <if test="pushWay != null">
+        push_way,
+      </if>
+      <if test="receiver != null">
+        receiver,
+      </if>
+      <if test="message != null">
+        message,
+      </if>
+      <if test="pushCycle != null">
+        push_cycle,
+      </if>
+      <if test="cycleUnit != null">
+        cycle_unit,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="gmtCreate != null">
+        #{gmtCreate,jdbcType=DATE},
+      </if>
+      <if test="gmtModify != null">
+        #{gmtModify,jdbcType=DATE},
+      </if>
+      <if test="creator != null">
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="modifier != null">
+        #{modifier,jdbcType=VARCHAR},
+      </if>
+      <if test="deleted != null">
+        #{deleted,jdbcType=BIT},
+      </if>
+      <if test="pushDateTime != null">
+        #{pushDateTime,jdbcType=DATE},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="pushWay != null">
+        #{pushWay,jdbcType=VARCHAR},
+      </if>
+      <if test="receiver != null">
+        #{receiver,jdbcType=VARCHAR},
+      </if>
+      <if test="message != null">
+        #{message,jdbcType=VARCHAR},
+      </if>
+      <if test="pushCycle != null">
+        #{pushCycle,jdbcType=INTEGER},
+      </if>
+      <if test="cycleUnit != null">
+        #{cycleUnit,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.uio.monitor.entity.PushMessageDOExample" resultType="java.lang.Long">
+    select count(*) from tb_push_message
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update tb_push_message
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.gmtCreate != null">
+        gmt_create = #{record.gmtCreate,jdbcType=DATE},
+      </if>
+      <if test="record.gmtModify != null">
+        gmt_modify = #{record.gmtModify,jdbcType=DATE},
+      </if>
+      <if test="record.creator != null">
+        creator = #{record.creator,jdbcType=VARCHAR},
+      </if>
+      <if test="record.modifier != null">
+        modifier = #{record.modifier,jdbcType=VARCHAR},
+      </if>
+      <if test="record.deleted != null">
+        deleted = #{record.deleted,jdbcType=BIT},
+      </if>
+      <if test="record.pushDateTime != null">
+        push_date_time = #{record.pushDateTime,jdbcType=DATE},
+      </if>
+      <if test="record.state != null">
+        state = #{record.state,jdbcType=VARCHAR},
+      </if>
+      <if test="record.pushWay != null">
+        push_way = #{record.pushWay,jdbcType=VARCHAR},
+      </if>
+      <if test="record.receiver != null">
+        receiver = #{record.receiver,jdbcType=VARCHAR},
+      </if>
+      <if test="record.message != null">
+        message = #{record.message,jdbcType=VARCHAR},
+      </if>
+      <if test="record.pushCycle != null">
+        push_cycle = #{record.pushCycle,jdbcType=INTEGER},
+      </if>
+      <if test="record.cycleUnit != null">
+        cycle_unit = #{record.cycleUnit,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update tb_push_message
+    set id = #{record.id,jdbcType=BIGINT},
+      gmt_create = #{record.gmtCreate,jdbcType=DATE},
+      gmt_modify = #{record.gmtModify,jdbcType=DATE},
+      creator = #{record.creator,jdbcType=VARCHAR},
+      modifier = #{record.modifier,jdbcType=VARCHAR},
+      deleted = #{record.deleted,jdbcType=BIT},
+      push_date_time = #{record.pushDateTime,jdbcType=DATE},
+      state = #{record.state,jdbcType=VARCHAR},
+      push_way = #{record.pushWay,jdbcType=VARCHAR},
+      receiver = #{record.receiver,jdbcType=VARCHAR},
+      message = #{record.message,jdbcType=VARCHAR},
+      push_cycle = #{record.pushCycle,jdbcType=INTEGER},
+      cycle_unit = #{record.cycleUnit,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uio.monitor.entity.PushMessageDO">
+    update tb_push_message
+    <set>
+      <if test="gmtCreate != null">
+        gmt_create = #{gmtCreate,jdbcType=DATE},
+      </if>
+      <if test="gmtModify != null">
+        gmt_modify = #{gmtModify,jdbcType=DATE},
+      </if>
+      <if test="creator != null">
+        creator = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="modifier != null">
+        modifier = #{modifier,jdbcType=VARCHAR},
+      </if>
+      <if test="deleted != null">
+        deleted = #{deleted,jdbcType=BIT},
+      </if>
+      <if test="pushDateTime != null">
+        push_date_time = #{pushDateTime,jdbcType=DATE},
+      </if>
+      <if test="state != null">
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="pushWay != null">
+        push_way = #{pushWay,jdbcType=VARCHAR},
+      </if>
+      <if test="receiver != null">
+        receiver = #{receiver,jdbcType=VARCHAR},
+      </if>
+      <if test="message != null">
+        message = #{message,jdbcType=VARCHAR},
+      </if>
+      <if test="pushCycle != null">
+        push_cycle = #{pushCycle,jdbcType=INTEGER},
+      </if>
+      <if test="cycleUnit != null">
+        cycle_unit = #{cycleUnit,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uio.monitor.entity.PushMessageDO">
+    update tb_push_message
+    set gmt_create = #{gmtCreate,jdbcType=DATE},
+      gmt_modify = #{gmtModify,jdbcType=DATE},
+      creator = #{creator,jdbcType=VARCHAR},
+      modifier = #{modifier,jdbcType=VARCHAR},
+      deleted = #{deleted,jdbcType=BIT},
+      push_date_time = #{pushDateTime,jdbcType=DATE},
+      state = #{state,jdbcType=VARCHAR},
+      push_way = #{pushWay,jdbcType=VARCHAR},
+      receiver = #{receiver,jdbcType=VARCHAR},
+      message = #{message,jdbcType=VARCHAR},
+      push_cycle = #{pushCycle,jdbcType=INTEGER},
+      cycle_unit = #{cycleUnit,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
