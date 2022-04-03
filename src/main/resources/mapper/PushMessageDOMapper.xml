@@ -15,6 +15,7 @@
     <result column="message" jdbcType="VARCHAR" property="message" />
     <result column="push_cycle" jdbcType="INTEGER" property="pushCycle" />
     <result column="cycle_unit" jdbcType="VARCHAR" property="cycleUnit" />
+    <result column="effective" jdbcType="BIT" property="effective" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -76,7 +77,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, gmt_create, gmt_modify, creator, modifier, deleted, push_date_time, state, push_way, 
-    receiver, message, push_cycle, cycle_unit
+    receiver, message, push_cycle, cycle_unit, effective
   </sql>
   <select id="selectByExample" parameterType="com.uio.monitor.entity.PushMessageDOExample" resultMap="BaseResultMap">
     select
@@ -113,12 +114,12 @@
       creator, modifier, deleted, 
       push_date_time, state, push_way, 
       receiver, message, push_cycle, 
-      cycle_unit)
+      cycle_unit, effective)
     values (#{id,jdbcType=BIGINT}, #{gmtCreate,jdbcType=DATE}, #{gmtModify,jdbcType=DATE}, 
       #{creator,jdbcType=VARCHAR}, #{modifier,jdbcType=VARCHAR}, #{deleted,jdbcType=BIT}, 
       #{pushDateTime,jdbcType=DATE}, #{state,jdbcType=VARCHAR}, #{pushWay,jdbcType=VARCHAR}, 
       #{receiver,jdbcType=VARCHAR}, #{message,jdbcType=VARCHAR}, #{pushCycle,jdbcType=INTEGER}, 
-      #{cycleUnit,jdbcType=VARCHAR})
+      #{cycleUnit,jdbcType=VARCHAR}, #{effective,jdbcType=BIT})
   </insert>
   <insert id="insertSelective" parameterType="com.uio.monitor.entity.PushMessageDO">
     insert into tb_push_message
@@ -162,6 +163,9 @@
       <if test="cycleUnit != null">
         cycle_unit,
       </if>
+      <if test="effective != null">
+        effective,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -202,6 +206,9 @@
       </if>
       <if test="cycleUnit != null">
         #{cycleUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="effective != null">
+        #{effective,jdbcType=BIT},
       </if>
     </trim>
   </insert>
@@ -253,6 +260,9 @@
       <if test="record.cycleUnit != null">
         cycle_unit = #{record.cycleUnit,jdbcType=VARCHAR},
       </if>
+      <if test="record.effective != null">
+        effective = #{record.effective,jdbcType=BIT},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -272,7 +282,8 @@
       receiver = #{record.receiver,jdbcType=VARCHAR},
       message = #{record.message,jdbcType=VARCHAR},
       push_cycle = #{record.pushCycle,jdbcType=INTEGER},
-      cycle_unit = #{record.cycleUnit,jdbcType=VARCHAR}
+      cycle_unit = #{record.cycleUnit,jdbcType=VARCHAR},
+      effective = #{record.effective,jdbcType=BIT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -316,6 +327,9 @@
       <if test="cycleUnit != null">
         cycle_unit = #{cycleUnit,jdbcType=VARCHAR},
       </if>
+      <if test="effective != null">
+        effective = #{effective,jdbcType=BIT},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -332,7 +346,8 @@
       receiver = #{receiver,jdbcType=VARCHAR},
       message = #{message,jdbcType=VARCHAR},
       push_cycle = #{pushCycle,jdbcType=INTEGER},
-      cycle_unit = #{cycleUnit,jdbcType=VARCHAR}
+      cycle_unit = #{cycleUnit,jdbcType=VARCHAR},
+      effective = #{effective,jdbcType=BIT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

@@ -981,6 +981,66 @@ public class PushMessageDOExample {
             addCriterion("cycle_unit not between", value1, value2, "cycleUnit");
             return (Criteria) this;
         }
+
+        public Criteria andEffectiveIsNull() {
+            addCriterion("effective is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andEffectiveIsNotNull() {
+            addCriterion("effective is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andEffectiveEqualTo(Boolean value) {
+            addCriterion("effective =", value, "effective");
+            return (Criteria) this;
+        }
+
+        public Criteria andEffectiveNotEqualTo(Boolean value) {
+            addCriterion("effective <>", value, "effective");
+            return (Criteria) this;
+        }
+
+        public Criteria andEffectiveGreaterThan(Boolean value) {
+            addCriterion("effective >", value, "effective");
+            return (Criteria) this;
+        }
+
+        public Criteria andEffectiveGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("effective >=", value, "effective");
+            return (Criteria) this;
+        }
+
+        public Criteria andEffectiveLessThan(Boolean value) {
+            addCriterion("effective <", value, "effective");
+            return (Criteria) this;
+        }
+
+        public Criteria andEffectiveLessThanOrEqualTo(Boolean value) {
+            addCriterion("effective <=", value, "effective");
+            return (Criteria) this;
+        }
+
+        public Criteria andEffectiveIn(List<Boolean> values) {
+            addCriterion("effective in", values, "effective");
+            return (Criteria) this;
+        }
+
+        public Criteria andEffectiveNotIn(List<Boolean> values) {
+            addCriterion("effective not in", values, "effective");
+            return (Criteria) this;
+        }
+
+        public Criteria andEffectiveBetween(Boolean value1, Boolean value2) {
+            addCriterion("effective between", value1, value2, "effective");
+            return (Criteria) this;
+        }
+
+        public Criteria andEffectiveNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("effective not between", value1, value2, "effective");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

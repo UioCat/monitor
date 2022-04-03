@@ -29,6 +29,8 @@ public class PushMessageDO {
 
     private String cycleUnit;
 
+    private Boolean effective;
+
     public Long getId() {
         return id;
     }
@@ -131,5 +133,13 @@ public class PushMessageDO {
 
     public void setCycleUnit(String cycleUnit) {
         this.cycleUnit = cycleUnit;
+    }
+
+    public Boolean getEffective() {
+        return effective;
+    }
+
+    public void setEffective(Boolean effective) {
+        this.effective = effective;
     }
 }
