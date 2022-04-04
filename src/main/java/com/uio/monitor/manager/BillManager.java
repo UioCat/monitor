@@ -90,12 +90,14 @@ public class BillManager {
         }
         criteria.andUserIdEqualTo(userId);
         criteria.andBillTypeEqualTo(billType);
+        criteria.andDeletedEqualTo(false);
         return billDOMapper.countByExample(example);
     }
 
     public List<BillDO> queryByDate(Long userId, Date startDate, Date endDate) {
         BillDOExample example = new BillDOExample();
         BillDOExample.Criteria criteria = example.createCriteria();
+        criteria.andDeletedEqualTo(false);
         criteria.andUserIdEqualTo(userId);
         criteria.andProduceTimeBetween(startDate, endDate);
         return billDOMapper.selectByExample(example);
