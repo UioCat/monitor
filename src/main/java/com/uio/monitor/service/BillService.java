@@ -136,8 +136,26 @@ public class BillService {
      * @return
      */
     public List<String> getConsumptionTypeService(Long userId, String amount, String desc) {
-        Set<String> resultList = new HashSet<>();
-        // 查询历史提交记录
+        List<String> resultList = new ArrayList<>();
+
+        // 从配置文件查询类型
+        List<BillConfigDTO> billConfigDTOS = configManager.getBillConfig(userId);
+        Optional.ofNullable(billConfigDTOS).orElse(Collections.emptyList()).forEach(item -> {
+            String[] priceScopes = item.getPriceScope().split("-");
+            if (priceScopes.length != 2) {
+                log.warn("priceScopes parse error, billConfig:{}", JSON.toJSONString(item));
+                return;
+            }
+            int lowPrice = Integer.parseInt(priceScopes[0]);
+            int highPrice = Integer.parseInt(priceScopes[1]);
+            if (lowPrice <= Double.parseDouble(amount) && Double.parseDouble(amount) <= highPrice) {
+                if (!resultList.contains(item.getCategory())) {
+                    resultList.add(item.getCategory());
+                }
+            }
+        });
+
+        // 从历史提交记录查询对应类型
         List<BillDO> billDOS = billManager.queryByDescAndAmount(userId, new BigDecimal(amount), desc);
         if (CollectionUtils.isEmpty(billDOS)) {
             billDOS = billManager.queryByDescAndAmount(userId, null, desc);
@@ -155,28 +173,10 @@ public class BillService {
                     maxSize = size;
                 }
             }
-            resultList.add(result);
+            resultList.add(0, result);
         }
 
-        List<BillConfigDTO> billConfigDTOS = configManager.getBillConfig(userId);
-        if (CollectionUtils.isEmpty(billConfigDTOS)) {
-            return null;
-        }
-        resultList.addAll(billConfigDTOS.stream().map(item -> {
-            String[] priceScopes = item.getPriceScope().split("-");
-            if (priceScopes.length != 2) {
-                return null;
-            }
-            int lowPrice = Integer.parseInt(priceScopes[0]);
-            int highPrice = Integer.parseInt(priceScopes[1]);
-            if (lowPrice <= Double.parseDouble(amount) && Double.parseDouble(amount) <= highPrice) {
-                return item.getCategory();
-            } else {
-                return null;
-            }
-        }).filter(Objects::nonNull).collect(Collectors.toList()));
-
-        return new ArrayList<>(resultList);
+        return resultList;
     }
 
     public List<BillStatisticsDTO> getBillStatistics(Long userId, Date startDate, Date endDate) {
