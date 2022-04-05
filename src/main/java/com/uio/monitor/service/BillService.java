@@ -81,18 +81,20 @@ public class BillService {
      * @return
      */
     public PageInfo<BillDTO> getBillList(Integer pageNum, Integer pageSize, Long userId, String category,
+        Date startTime, Date endTime,
         String billType) {
         PageInfo<BillDTO> res = new PageInfo<>();
         res.setPageNum(pageSize);
         res.setPageSize(pageNum);
         res.setTotal(0);
 
-        List<BillDO> billDOList = billManager.queryByBillType(userId, billType, pageNum, pageSize, category);
+        List<BillDO> billDOList = billManager.queryByBillType(userId, billType, pageNum, pageSize,
+                startTime, endTime, category);
         if (CollectionUtils.isEmpty(billDOList)) {
             return res;
         }
         List<BillDTO> billDTOS = billDOList.stream().map(this::convertBillDTO).collect(Collectors.toList());
-        Long count = billManager.countByType(userId, billType, category);
+        Long count = billManager.countByType(userId, billType, startTime, endTime, category);
         res.setTotal(count);
         res.setList(billDTOS);
         return res;
