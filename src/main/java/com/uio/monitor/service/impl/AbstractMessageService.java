@@ -1,5 +1,6 @@
 package com.uio.monitor.service.impl;
 
+import com.uio.monitor.entity.PushMessageDO;
 import com.uio.monitor.manager.PushMessageManager;
 import com.uio.monitor.service.PushMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ public abstract class AbstractMessageService implements PushMessageService {
     private PushMessageManager pushMessageManager;
 
     @Override
-    public Boolean insertPushMessageData() {
+    public Boolean insertPushMessageData(PushMessageDO pushMessageDO) {
         return null;
     }
 }

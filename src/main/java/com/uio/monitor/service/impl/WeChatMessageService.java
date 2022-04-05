@@ -1,5 +1,6 @@
 package com.uio.monitor.service.impl;
 
+import com.uio.monitor.common.PushWayEnum;
 import org.springframework.stereotype.Service;
 
 /**
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Service;
 public class WeChatMessageService extends AbstractMessageService {
 
     @Override
-    public Boolean sendMessage() {
+    public Boolean sendMessage(String sender, String receiver, PushWayEnum pushWayEnum, String message) {
         return null;
     }
 }

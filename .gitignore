@@ -35,5 +35,8 @@ build/
 ### constom ###
 *.sh
 *.properties
+
+# 打卡程序相关
 PushCardTimer.java
 PushCardTest.java
+ManController.java

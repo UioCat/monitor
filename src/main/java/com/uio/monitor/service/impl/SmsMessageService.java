@@ -1,5 +1,6 @@
 package com.uio.monitor.service.impl;
 
+import com.uio.monitor.common.PushWayEnum;
 import com.uio.monitor.service.PushMessageService;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +14,7 @@ public class SmsMessageService extends AbstractMessageService {
 
 
     @Override
-    public Boolean sendMessage() {
+    public Boolean sendMessage(String sender, String receiver, PushWayEnum pushWayEnum, String message) {
         return null;
     }
 }
