@@ -12,17 +12,15 @@ import com.uio.monitor.controller.req.UpdateBillReq;
 import com.uio.monitor.controller.resp.BillConfigDTO;
 import com.uio.monitor.controller.resp.BillDTO;
 import com.uio.monitor.controller.resp.BillStatisticsDTO;
+import com.uio.monitor.manager.BillManager;
 import com.uio.monitor.manager.ConfigManager;
 import com.uio.monitor.service.BillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -38,6 +36,8 @@ public class BillController extends BaseController {
     private BillService billService;
     @Autowired
     private ConfigManager configManager;
+    @Autowired
+    private BillManager billManager;
 
     @PostMapping("/addBill")
     public BackMessage<Boolean> addBill(@RequestBody @Valid AddBillReq addBillReq) {
@@ -106,11 +106,11 @@ public class BillController extends BaseController {
     public BackMessage<List<String>> getAllConsumptionType() {
         Long userId = super.getUserId();
         List<BillConfigDTO> billConfigDTOS = configManager.getBillConfig(userId);
-        if (CollectionUtils.isEmpty(billConfigDTOS)) {
-            return BackMessage.success(Collections.emptyList());
-        }
-        return BackMessage.success(billConfigDTOS.stream().map(BillConfigDTO::getCategory)
-            .collect(Collectors.toList()));
+
+        Set<String> categoryList = Optional.ofNullable(billConfigDTOS).orElse(Collections.emptyList()).stream()
+                .map(BillConfigDTO::getCategory).collect(Collectors.toSet());
+        categoryList.addAll(billManager.queryAllCategoryByUserId(userId));
+        return BackMessage.success(new ArrayList<>(categoryList));
     }
 
     /**
