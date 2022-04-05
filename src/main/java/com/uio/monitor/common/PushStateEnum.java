@@ -10,5 +10,6 @@ public enum PushStateEnum {
     INIT,
     PROCESSING,
     FINISH,
+    FAILED,
     ;
 }
