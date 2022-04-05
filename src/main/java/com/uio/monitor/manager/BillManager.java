@@ -58,6 +58,7 @@ public class BillManager {
      * @return
      */
     public List<BillDO> queryByBillType(Long userId, String billType, Integer pageNum, Integer pageSize,
+        Date startTime, Date endTime,
         String category) {
 
         PageHelper.startPage(pageNum, pageSize);
@@ -66,11 +67,37 @@ public class BillManager {
         if (!StringUtils.isEmpty(category)) {
             criteria.andCategoryEqualTo(category);
         }
+        if (startTime != null && endTime != null) {
+            criteria.andProduceTimeBetween(startTime, endTime);
+        }
         criteria.andUserIdEqualTo(userId);
         criteria.andBillTypeEqualTo(billType);
         criteria.andDeletedEqualTo(false);
         example.setOrderByClause("gmt_create desc");
         return billDOMapper.selectByExample(example);
+    }
+
+    /**
+     * 查询用户的账单数量
+     * @param userId
+     * @param billType
+     * @param category
+     * @return
+     */
+    public Long countByType(Long userId, String billType,
+                            Date startTime, Date endTime,
+                            String category) {
+        BillDOExample example = new BillDOExample();
+        BillDOExample.Criteria criteria = example.createCriteria();
+        if (!StringUtils.isEmpty(category)) {
+            criteria.andCategoryEqualTo(category);
+        }
+        if (startTime != null && endTime != null) {
+            criteria.andProduceTimeBetween(startTime, endTime);
+        }
+        criteria.andUserIdEqualTo(userId);
+        criteria.andBillTypeEqualTo(billType);
+        return billDOMapper.countByExample(example);
     }
 
     /**
@@ -108,25 +135,6 @@ public class BillManager {
     }
 
     /**
-     * 查询用户的账单数量
-     * @param userId
-     * @param billType
-     * @param category
-     * @return
-     */
-    public Long countByType(Long userId, String billType, String category) {
-        BillDOExample example = new BillDOExample();
-        BillDOExample.Criteria criteria = example.createCriteria();
-        if (!StringUtils.isEmpty(category)) {
-            criteria.andCategoryEqualTo(category);
-        }
-        criteria.andUserIdEqualTo(userId);
-        criteria.andBillTypeEqualTo(billType);
-        criteria.andDeletedEqualTo(false);
-        return billDOMapper.countByExample(example);
-    }
-
-    /**
      * 根据日期查询账单
      * @param userId
      * @param startDate
@@ -136,7 +144,6 @@ public class BillManager {
     public List<BillDO> queryByDate(Long userId, Date startDate, Date endDate) {
         BillDOExample example = new BillDOExample();
         BillDOExample.Criteria criteria = example.createCriteria();
-        criteria.andDeletedEqualTo(false);
         criteria.andUserIdEqualTo(userId);
         criteria.andProduceTimeBetween(startDate, endDate);
         return billDOMapper.selectByExample(example);
