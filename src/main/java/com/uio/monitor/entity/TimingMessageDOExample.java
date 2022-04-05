@@ -2,16 +2,17 @@ package com.uio.monitor.entity;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
-public class PushMessageDOExample {
+public class TimingMessageDOExample {
     protected String orderByClause;
 
     protected boolean distinct;
 
     protected List<Criteria> oredCriteria;
 
-    public PushMessageDOExample() {
+    public TimingMessageDOExample() {
         oredCriteria = new ArrayList<Criteria>();
     }
 
@@ -105,6 +106,32 @@ public class PushMessageDOExample {
             criteria.add(new Criterion(condition, value1, value2));
         }
 
+        protected void addCriterionForJDBCDate(String condition, Date value, String property) {
+            if (value == null) {
+                throw new RuntimeException("Value for " + property + " cannot be null");
+            }
+            addCriterion(condition, new java.sql.Date(value.getTime()), property);
+        }
+
+        protected void addCriterionForJDBCDate(String condition, List<Date> values, String property) {
+            if (values == null || values.size() == 0) {
+                throw new RuntimeException("Value list for " + property + " cannot be null or empty");
+            }
+            List<java.sql.Date> dateList = new ArrayList<java.sql.Date>();
+            Iterator<Date> iter = values.iterator();
+            while (iter.hasNext()) {
+                dateList.add(new java.sql.Date(iter.next().getTime()));
+            }
+            addCriterion(condition, dateList, property);
+        }
+
+        protected void addCriterionForJDBCDate(String condition, Date value1, Date value2, String property) {
+            if (value1 == null || value2 == null) {
+                throw new RuntimeException("Between values for " + property + " cannot be null");
+            }
+            addCriterion(condition, new java.sql.Date(value1.getTime()), new java.sql.Date(value2.getTime()), property);
+        }
+
         public Criteria andIdIsNull() {
             addCriterion("id is null");
             return (Criteria) this;
@@ -176,52 +203,52 @@ public class PushMessageDOExample {
         }
 
         public Criteria andGmtCreateEqualTo(Date value) {
-            addCriterion("gmt_create =", value, "gmtCreate");
+            addCriterionForJDBCDate("gmt_create =", value, "gmtCreate");
             return (Criteria) this;
         }
 
         public Criteria andGmtCreateNotEqualTo(Date value) {
-            addCriterion("gmt_create <>", value, "gmtCreate");
+            addCriterionForJDBCDate("gmt_create <>", value, "gmtCreate");
             return (Criteria) this;
         }
 
         public Criteria andGmtCreateGreaterThan(Date value) {
-            addCriterion("gmt_create >", value, "gmtCreate");
+            addCriterionForJDBCDate("gmt_create >", value, "gmtCreate");
             return (Criteria) this;
         }
 
         public Criteria andGmtCreateGreaterThanOrEqualTo(Date value) {
-            addCriterion("gmt_create >=", value, "gmtCreate");
+            addCriterionForJDBCDate("gmt_create >=", value, "gmtCreate");
             return (Criteria) this;
         }
 
         public Criteria andGmtCreateLessThan(Date value) {
-            addCriterion("gmt_create <", value, "gmtCreate");
+            addCriterionForJDBCDate("gmt_create <", value, "gmtCreate");
             return (Criteria) this;
         }
 
         public Criteria andGmtCreateLessThanOrEqualTo(Date value) {
-            addCriterion("gmt_create <=", value, "gmtCreate");
+            addCriterionForJDBCDate("gmt_create <=", value, "gmtCreate");
             return (Criteria) this;
         }
 
         public Criteria andGmtCreateIn(List<Date> values) {
-            addCriterion("gmt_create in", values, "gmtCreate");
+            addCriterionForJDBCDate("gmt_create in", values, "gmtCreate");
             return (Criteria) this;
         }
 
         public Criteria andGmtCreateNotIn(List<Date> values) {
-            addCriterion("gmt_create not in", values, "gmtCreate");
+            addCriterionForJDBCDate("gmt_create not in", values, "gmtCreate");
             return (Criteria) this;
         }
 
         public Criteria andGmtCreateBetween(Date value1, Date value2) {
-            addCriterion("gmt_create between", value1, value2, "gmtCreate");
+            addCriterionForJDBCDate("gmt_create between", value1, value2, "gmtCreate");
             return (Criteria) this;
         }
 
         public Criteria andGmtCreateNotBetween(Date value1, Date value2) {
-            addCriterion("gmt_create not between", value1, value2, "gmtCreate");
+            addCriterionForJDBCDate("gmt_create not between", value1, value2, "gmtCreate");
             return (Criteria) this;
         }
 
@@ -236,52 +263,52 @@ public class PushMessageDOExample {
         }
 
         public Criteria andGmtModifyEqualTo(Date value) {
-            addCriterion("gmt_modify =", value, "gmtModify");
+            addCriterionForJDBCDate("gmt_modify =", value, "gmtModify");
             return (Criteria) this;
         }
 
         public Criteria andGmtModifyNotEqualTo(Date value) {
-            addCriterion("gmt_modify <>", value, "gmtModify");
+            addCriterionForJDBCDate("gmt_modify <>", value, "gmtModify");
             return (Criteria) this;
         }
 
         public Criteria andGmtModifyGreaterThan(Date value) {
-            addCriterion("gmt_modify >", value, "gmtModify");
+            addCriterionForJDBCDate("gmt_modify >", value, "gmtModify");
             return (Criteria) this;
         }
 
         public Criteria andGmtModifyGreaterThanOrEqualTo(Date value) {
-            addCriterion("gmt_modify >=", value, "gmtModify");
+            addCriterionForJDBCDate("gmt_modify >=", value, "gmtModify");
             return (Criteria) this;
         }
 
         public Criteria andGmtModifyLessThan(Date value) {
-            addCriterion("gmt_modify <", value, "gmtModify");
+            addCriterionForJDBCDate("gmt_modify <", value, "gmtModify");
             return (Criteria) this;
         }
 
         public Criteria andGmtModifyLessThanOrEqualTo(Date value) {
-            addCriterion("gmt_modify <=", value, "gmtModify");
+            addCriterionForJDBCDate("gmt_modify <=", value, "gmtModify");
             return (Criteria) this;
         }
 
         public Criteria andGmtModifyIn(List<Date> values) {
-            addCriterion("gmt_modify in", values, "gmtModify");
+            addCriterionForJDBCDate("gmt_modify in", values, "gmtModify");
             return (Criteria) this;
         }
 
         public Criteria andGmtModifyNotIn(List<Date> values) {
-            addCriterion("gmt_modify not in", values, "gmtModify");
+            addCriterionForJDBCDate("gmt_modify not in", values, "gmtModify");
             return (Criteria) this;
         }
 
         public Criteria andGmtModifyBetween(Date value1, Date value2) {
-            addCriterion("gmt_modify between", value1, value2, "gmtModify");
+            addCriterionForJDBCDate("gmt_modify between", value1, value2, "gmtModify");
             return (Criteria) this;
         }
 
         public Criteria andGmtModifyNotBetween(Date value1, Date value2) {
-            addCriterion("gmt_modify not between", value1, value2, "gmtModify");
+            addCriterionForJDBCDate("gmt_modify not between", value1, value2, "gmtModify");
             return (Criteria) this;
         }
 
@@ -482,6 +509,66 @@ public class PushMessageDOExample {
 
         public Criteria andDeletedNotBetween(Boolean value1, Boolean value2) {
             addCriterion("deleted not between", value1, value2, "deleted");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushDateTimeIsNull() {
+            addCriterion("push_date_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushDateTimeIsNotNull() {
+            addCriterion("push_date_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushDateTimeEqualTo(Date value) {
+            addCriterionForJDBCDate("push_date_time =", value, "pushDateTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushDateTimeNotEqualTo(Date value) {
+            addCriterionForJDBCDate("push_date_time <>", value, "pushDateTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushDateTimeGreaterThan(Date value) {
+            addCriterionForJDBCDate("push_date_time >", value, "pushDateTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushDateTimeGreaterThanOrEqualTo(Date value) {
+            addCriterionForJDBCDate("push_date_time >=", value, "pushDateTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushDateTimeLessThan(Date value) {
+            addCriterionForJDBCDate("push_date_time <", value, "pushDateTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushDateTimeLessThanOrEqualTo(Date value) {
+            addCriterionForJDBCDate("push_date_time <=", value, "pushDateTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushDateTimeIn(List<Date> values) {
+            addCriterionForJDBCDate("push_date_time in", values, "pushDateTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushDateTimeNotIn(List<Date> values) {
+            addCriterionForJDBCDate("push_date_time not in", values, "pushDateTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushDateTimeBetween(Date value1, Date value2) {
+            addCriterionForJDBCDate("push_date_time between", value1, value2, "pushDateTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushDateTimeNotBetween(Date value1, Date value2) {
+            addCriterionForJDBCDate("push_date_time not between", value1, value2, "pushDateTime");
             return (Criteria) this;
         }
 
@@ -762,6 +849,196 @@ public class PushMessageDOExample {
 
         public Criteria andMessageNotBetween(String value1, String value2) {
             addCriterion("message not between", value1, value2, "message");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushCycleIsNull() {
+            addCriterion("push_cycle is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushCycleIsNotNull() {
+            addCriterion("push_cycle is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushCycleEqualTo(Integer value) {
+            addCriterion("push_cycle =", value, "pushCycle");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushCycleNotEqualTo(Integer value) {
+            addCriterion("push_cycle <>", value, "pushCycle");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushCycleGreaterThan(Integer value) {
+            addCriterion("push_cycle >", value, "pushCycle");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushCycleGreaterThanOrEqualTo(Integer value) {
+            addCriterion("push_cycle >=", value, "pushCycle");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushCycleLessThan(Integer value) {
+            addCriterion("push_cycle <", value, "pushCycle");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushCycleLessThanOrEqualTo(Integer value) {
+            addCriterion("push_cycle <=", value, "pushCycle");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushCycleIn(List<Integer> values) {
+            addCriterion("push_cycle in", values, "pushCycle");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushCycleNotIn(List<Integer> values) {
+            addCriterion("push_cycle not in", values, "pushCycle");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushCycleBetween(Integer value1, Integer value2) {
+            addCriterion("push_cycle between", value1, value2, "pushCycle");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushCycleNotBetween(Integer value1, Integer value2) {
+            addCriterion("push_cycle not between", value1, value2, "pushCycle");
+            return (Criteria) this;
+        }
+
+        public Criteria andCycleUnitIsNull() {
+            addCriterion("cycle_unit is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCycleUnitIsNotNull() {
+            addCriterion("cycle_unit is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCycleUnitEqualTo(String value) {
+            addCriterion("cycle_unit =", value, "cycleUnit");
+            return (Criteria) this;
+        }
+
+        public Criteria andCycleUnitNotEqualTo(String value) {
+            addCriterion("cycle_unit <>", value, "cycleUnit");
+            return (Criteria) this;
+        }
+
+        public Criteria andCycleUnitGreaterThan(String value) {
+            addCriterion("cycle_unit >", value, "cycleUnit");
+            return (Criteria) this;
+        }
+
+        public Criteria andCycleUnitGreaterThanOrEqualTo(String value) {
+            addCriterion("cycle_unit >=", value, "cycleUnit");
+            return (Criteria) this;
+        }
+
+        public Criteria andCycleUnitLessThan(String value) {
+            addCriterion("cycle_unit <", value, "cycleUnit");
+            return (Criteria) this;
+        }
+
+        public Criteria andCycleUnitLessThanOrEqualTo(String value) {
+            addCriterion("cycle_unit <=", value, "cycleUnit");
+            return (Criteria) this;
+        }
+
+        public Criteria andCycleUnitLike(String value) {
+            addCriterion("cycle_unit like", value, "cycleUnit");
+            return (Criteria) this;
+        }
+
+        public Criteria andCycleUnitNotLike(String value) {
+            addCriterion("cycle_unit not like", value, "cycleUnit");
+            return (Criteria) this;
+        }
+
+        public Criteria andCycleUnitIn(List<String> values) {
+            addCriterion("cycle_unit in", values, "cycleUnit");
+            return (Criteria) this;
+        }
+
+        public Criteria andCycleUnitNotIn(List<String> values) {
+            addCriterion("cycle_unit not in", values, "cycleUnit");
+            return (Criteria) this;
+        }
+
+        public Criteria andCycleUnitBetween(String value1, String value2) {
+            addCriterion("cycle_unit between", value1, value2, "cycleUnit");
+            return (Criteria) this;
+        }
+
+        public Criteria andCycleUnitNotBetween(String value1, String value2) {
+            addCriterion("cycle_unit not between", value1, value2, "cycleUnit");
+            return (Criteria) this;
+        }
+
+        public Criteria andEffectiveIsNull() {
+            addCriterion("effective is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andEffectiveIsNotNull() {
+            addCriterion("effective is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andEffectiveEqualTo(Boolean value) {
+            addCriterion("effective =", value, "effective");
+            return (Criteria) this;
+        }
+
+        public Criteria andEffectiveNotEqualTo(Boolean value) {
+            addCriterion("effective <>", value, "effective");
+            return (Criteria) this;
+        }
+
+        public Criteria andEffectiveGreaterThan(Boolean value) {
+            addCriterion("effective >", value, "effective");
+            return (Criteria) this;
+        }
+
+        public Criteria andEffectiveGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("effective >=", value, "effective");
+            return (Criteria) this;
+        }
+
+        public Criteria andEffectiveLessThan(Boolean value) {
+            addCriterion("effective <", value, "effective");
+            return (Criteria) this;
+        }
+
+        public Criteria andEffectiveLessThanOrEqualTo(Boolean value) {
+            addCriterion("effective <=", value, "effective");
+            return (Criteria) this;
+        }
+
+        public Criteria andEffectiveIn(List<Boolean> values) {
+            addCriterion("effective in", values, "effective");
+            return (Criteria) this;
+        }
+
+        public Criteria andEffectiveNotIn(List<Boolean> values) {
+            addCriterion("effective not in", values, "effective");
+            return (Criteria) this;
+        }
+
+        public Criteria andEffectiveBetween(Boolean value1, Boolean value2) {
+            addCriterion("effective between", value1, value2, "effective");
+            return (Criteria) this;
+        }
+
+        public Criteria andEffectiveNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("effective not between", value1, value2, "effective");
             return (Criteria) this;
         }
     }

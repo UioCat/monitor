@@ -2,7 +2,7 @@ package com.uio.monitor.entity;
 
 import java.util.Date;
 
-public class PushMessageDO {
+public class TimingMessageDO {
     private Long id;
 
     private Date gmtCreate;
@@ -15,6 +15,8 @@ public class PushMessageDO {
 
     private Boolean deleted;
 
+    private Date pushDateTime;
+
     private String state;
 
     private String pushWay;
@@ -22,6 +24,12 @@ public class PushMessageDO {
     private String receiver;
 
     private String message;
+
+    private Integer pushCycle;
+
+    private String cycleUnit;
+
+    private Boolean effective;
 
     public Long getId() {
         return id;
@@ -71,6 +79,14 @@ public class PushMessageDO {
         this.deleted = deleted;
     }
 
+    public Date getPushDateTime() {
+        return pushDateTime;
+    }
+
+    public void setPushDateTime(Date pushDateTime) {
+        this.pushDateTime = pushDateTime;
+    }
+
     public String getState() {
         return state;
     }
@@ -101,5 +117,29 @@ public class PushMessageDO {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public Integer getPushCycle() {
+        return pushCycle;
+    }
+
+    public void setPushCycle(Integer pushCycle) {
+        this.pushCycle = pushCycle;
+    }
+
+    public String getCycleUnit() {
+        return cycleUnit;
+    }
+
+    public void setCycleUnit(String cycleUnit) {
+        this.cycleUnit = cycleUnit;
+    }
+
+    public Boolean getEffective() {
+        return effective;
+    }
+
+    public void setEffective(Boolean effective) {
+        this.effective = effective;
     }
 }

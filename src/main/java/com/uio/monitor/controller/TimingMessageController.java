@@ -3,6 +3,8 @@ package com.uio.monitor.controller;
 import com.uio.monitor.common.BackMessage;
 import com.uio.monitor.controller.req.AddTimingMessageReq;
 import com.uio.monitor.controller.req.UpdateTimingMessageReq;
+import com.uio.monitor.service.TimingMessageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -10,10 +12,13 @@ import javax.validation.Valid;
 /**
  * @author han xun
  * Date 2022/4/3 22:31
- * Description:
+ * Description: 定时消息
  */
 @RestController
 public class TimingMessageController {
+
+    @Autowired
+    private TimingMessageService timingMessageService;
 
     /**
      * 新增一个定时消息
@@ -21,6 +26,7 @@ public class TimingMessageController {
      */
     @PostMapping("/addTimingMessage")
     public BackMessage<Boolean> addTimingMessage(@RequestBody @Valid AddTimingMessageReq addTimingMessageReq) {
+
         return null;
     }
 
