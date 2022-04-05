@@ -31,16 +31,27 @@ public class TimingMessageManager {
         TimingMessageDOExample.Criteria criteria = example.createCriteria();
         criteria.andStateEqualTo(PushStateEnum.INIT.name());
         criteria.andPushDateTimeLessThanOrEqualTo(new Date());
+        criteria.andEffectiveEqualTo(true);
         criteria.andDeletedEqualTo(false);
         return timingMessageDOMapper.selectByExample(example);
     }
 
-    public void updateMessageState(Long id, PushStateEnum pushStateEnum) {
-        return;
+    public int updateMessageState(Long id, PushStateEnum pushStateEnum, PushStateEnum oldPushStateEnum) {
+        TimingMessageDOExample example = new TimingMessageDOExample();
+        TimingMessageDOExample.Criteria criteria = example.createCriteria();
+        criteria.andIdEqualTo(id);
+        criteria.andStateEqualTo(oldPushStateEnum.name());
+
+        TimingMessageDO timingMessageDO = new TimingMessageDO();
+        timingMessageDO.setGmtModify(new Date());
+        timingMessageDO.setModifier("system");
+        timingMessageDO.setState(pushStateEnum.name());
+
+        return timingMessageDOMapper.updateByExampleSelective(timingMessageDO, example);
     }
 
-    public void insertMessage(PushMessageDO messageDO) {
-        return;
+    public void insertMessage(TimingMessageDO messageDO) {
+        timingMessageDOMapper.insert(messageDO);
     }
 
 }

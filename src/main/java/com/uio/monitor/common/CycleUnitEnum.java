@@ -15,4 +15,12 @@ public enum CycleUnitEnum {
     MONTH,
     YEAR,
     ;
+
+    public static CycleUnitEnum getByName(String name) {
+        try {
+            return CycleUnitEnum.getByName(name);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
 }

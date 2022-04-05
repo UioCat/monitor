@@ -21,4 +21,12 @@ public enum PushWayEnum {
     public String getServiceName() {
         return serviceName;
     }
+
+    public static PushWayEnum getByName(String name) {
+        try {
+            return PushWayEnum.valueOf(name);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
 }
