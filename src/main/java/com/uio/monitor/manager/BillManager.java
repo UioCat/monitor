@@ -95,6 +95,7 @@ public class BillManager {
         if (startTime != null && endTime != null) {
             criteria.andProduceTimeBetween(startTime, endTime);
         }
+        criteria.andDeletedEqualTo(false);
         criteria.andUserIdEqualTo(userId);
         criteria.andBillTypeEqualTo(billType);
         return billDOMapper.countByExample(example);
@@ -146,6 +147,7 @@ public class BillManager {
         BillDOExample.Criteria criteria = example.createCriteria();
         criteria.andUserIdEqualTo(userId);
         criteria.andProduceTimeBetween(startDate, endDate);
+        criteria.andDeletedEqualTo(false);
         return billDOMapper.selectByExample(example);
     }
 
