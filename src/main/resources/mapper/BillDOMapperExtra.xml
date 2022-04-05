@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uio.monitor.mapper.BillDOMapperExtra">
+  <resultMap id="BaseResultMap" type="com.uio.monitor.entity.BillDO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_modify" jdbcType="TIMESTAMP" property="gmtModify" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="modifier" jdbcType="VARCHAR" property="modifier" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+    <result column="produce_time" jdbcType="DATE" property="produceTime" />
+    <result column="bill_type" jdbcType="VARCHAR" property="billType" />
+    <result column="produce_way" jdbcType="VARCHAR" property="produceWay" />
+    <result column="amount" jdbcType="DECIMAL" property="amount" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="category" jdbcType="VARCHAR" property="category" />
+  </resultMap>
+
+  <select id="queryUserCategoryInBill" parameterType="long" resultType="string">
+    SELECT DISTINCT(category)
+    FROM tb_bill
+    WHERE user_id = #{userId}
+  </select>
+</mapper>
