@@ -3,12 +3,12 @@
 <mapper namespace="com.uio.monitor.mapper.TimingMessageDOMapper">
   <resultMap id="BaseResultMap" type="com.uio.monitor.entity.TimingMessageDO">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="gmt_create" jdbcType="DATE" property="gmtCreate" />
-    <result column="gmt_modify" jdbcType="DATE" property="gmtModify" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_modify" jdbcType="TIMESTAMP" property="gmtModify" />
     <result column="creator" jdbcType="VARCHAR" property="creator" />
     <result column="modifier" jdbcType="VARCHAR" property="modifier" />
     <result column="deleted" jdbcType="BIT" property="deleted" />
-    <result column="push_date_time" jdbcType="DATE" property="pushDateTime" />
+    <result column="push_date_time" jdbcType="TIMESTAMP" property="pushDateTime" />
     <result column="state" jdbcType="VARCHAR" property="state" />
     <result column="push_way" jdbcType="VARCHAR" property="pushWay" />
     <result column="receiver" jdbcType="VARCHAR" property="receiver" />
@@ -115,9 +115,9 @@
       push_date_time, state, push_way, 
       receiver, message, push_cycle, 
       cycle_unit, effective)
-    values (#{id,jdbcType=BIGINT}, #{gmtCreate,jdbcType=DATE}, #{gmtModify,jdbcType=DATE}, 
+    values (#{id,jdbcType=BIGINT}, #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModify,jdbcType=TIMESTAMP}, 
       #{creator,jdbcType=VARCHAR}, #{modifier,jdbcType=VARCHAR}, #{deleted,jdbcType=BIT}, 
-      #{pushDateTime,jdbcType=DATE}, #{state,jdbcType=VARCHAR}, #{pushWay,jdbcType=VARCHAR}, 
+      #{pushDateTime,jdbcType=TIMESTAMP}, #{state,jdbcType=VARCHAR}, #{pushWay,jdbcType=VARCHAR}, 
       #{receiver,jdbcType=VARCHAR}, #{message,jdbcType=VARCHAR}, #{pushCycle,jdbcType=INTEGER}, 
       #{cycleUnit,jdbcType=VARCHAR}, #{effective,jdbcType=BIT})
   </insert>
@@ -172,10 +172,10 @@
         #{id,jdbcType=BIGINT},
       </if>
       <if test="gmtCreate != null">
-        #{gmtCreate,jdbcType=DATE},
+        #{gmtCreate,jdbcType=TIMESTAMP},
       </if>
       <if test="gmtModify != null">
-        #{gmtModify,jdbcType=DATE},
+        #{gmtModify,jdbcType=TIMESTAMP},
       </if>
       <if test="creator != null">
         #{creator,jdbcType=VARCHAR},
@@ -187,7 +187,7 @@
         #{deleted,jdbcType=BIT},
       </if>
       <if test="pushDateTime != null">
-        #{pushDateTime,jdbcType=DATE},
+        #{pushDateTime,jdbcType=TIMESTAMP},
       </if>
       <if test="state != null">
         #{state,jdbcType=VARCHAR},
@@ -225,10 +225,10 @@
         id = #{record.id,jdbcType=BIGINT},
       </if>
       <if test="record.gmtCreate != null">
-        gmt_create = #{record.gmtCreate,jdbcType=DATE},
+        gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP},
       </if>
       <if test="record.gmtModify != null">
-        gmt_modify = #{record.gmtModify,jdbcType=DATE},
+        gmt_modify = #{record.gmtModify,jdbcType=TIMESTAMP},
       </if>
       <if test="record.creator != null">
         creator = #{record.creator,jdbcType=VARCHAR},
@@ -240,7 +240,7 @@
         deleted = #{record.deleted,jdbcType=BIT},
       </if>
       <if test="record.pushDateTime != null">
-        push_date_time = #{record.pushDateTime,jdbcType=DATE},
+        push_date_time = #{record.pushDateTime,jdbcType=TIMESTAMP},
       </if>
       <if test="record.state != null">
         state = #{record.state,jdbcType=VARCHAR},
@@ -271,12 +271,12 @@
   <update id="updateByExample" parameterType="map">
     update tb_timing_message
     set id = #{record.id,jdbcType=BIGINT},
-      gmt_create = #{record.gmtCreate,jdbcType=DATE},
-      gmt_modify = #{record.gmtModify,jdbcType=DATE},
+      gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP},
+      gmt_modify = #{record.gmtModify,jdbcType=TIMESTAMP},
       creator = #{record.creator,jdbcType=VARCHAR},
       modifier = #{record.modifier,jdbcType=VARCHAR},
       deleted = #{record.deleted,jdbcType=BIT},
-      push_date_time = #{record.pushDateTime,jdbcType=DATE},
+      push_date_time = #{record.pushDateTime,jdbcType=TIMESTAMP},
       state = #{record.state,jdbcType=VARCHAR},
       push_way = #{record.pushWay,jdbcType=VARCHAR},
       receiver = #{record.receiver,jdbcType=VARCHAR},
@@ -292,10 +292,10 @@
     update tb_timing_message
     <set>
       <if test="gmtCreate != null">
-        gmt_create = #{gmtCreate,jdbcType=DATE},
+        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
       </if>
       <if test="gmtModify != null">
-        gmt_modify = #{gmtModify,jdbcType=DATE},
+        gmt_modify = #{gmtModify,jdbcType=TIMESTAMP},
       </if>
       <if test="creator != null">
         creator = #{creator,jdbcType=VARCHAR},
@@ -307,7 +307,7 @@
         deleted = #{deleted,jdbcType=BIT},
       </if>
       <if test="pushDateTime != null">
-        push_date_time = #{pushDateTime,jdbcType=DATE},
+        push_date_time = #{pushDateTime,jdbcType=TIMESTAMP},
       </if>
       <if test="state != null">
         state = #{state,jdbcType=VARCHAR},
@@ -335,12 +335,12 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.uio.monitor.entity.TimingMessageDO">
     update tb_timing_message
-    set gmt_create = #{gmtCreate,jdbcType=DATE},
-      gmt_modify = #{gmtModify,jdbcType=DATE},
+    set gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      gmt_modify = #{gmtModify,jdbcType=TIMESTAMP},
       creator = #{creator,jdbcType=VARCHAR},
       modifier = #{modifier,jdbcType=VARCHAR},
       deleted = #{deleted,jdbcType=BIT},
-      push_date_time = #{pushDateTime,jdbcType=DATE},
+      push_date_time = #{pushDateTime,jdbcType=TIMESTAMP},
       state = #{state,jdbcType=VARCHAR},
       push_way = #{pushWay,jdbcType=VARCHAR},
       receiver = #{receiver,jdbcType=VARCHAR},

@@ -39,7 +39,7 @@ public class TimingMessageScanner {
      * 扫描消息
      * 30s扫描
      */
-    @Scheduled(cron = "0/30 * * * * ?")
+    @Scheduled(cron = "*/10 * * * * ?")
     public void scannerMessage() {
         List<TimingMessageDO> timingMessageDOList = timingMessageManager.queryReadyMessage();
         if (CollectionUtils.isEmpty(timingMessageDOList)) {

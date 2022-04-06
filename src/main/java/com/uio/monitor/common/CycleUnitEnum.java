@@ -18,7 +18,7 @@ public enum CycleUnitEnum {
 
     public static CycleUnitEnum getByName(String name) {
         try {
-            return CycleUnitEnum.getByName(name);
+            return CycleUnitEnum.valueOf(name);
         } catch (IllegalArgumentException e) {
             return null;
         }
