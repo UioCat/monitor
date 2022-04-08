@@ -9,7 +9,7 @@ public enum CycleUnitEnum {
 
     NONE,
     MINUTE,
-    HOURS,
+    HOUR,
     DAY,
     WEEK,
     MONTH,

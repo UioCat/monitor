@@ -37,7 +37,7 @@ public class TimingMessageScanner {
     private final static Long TIMING_MESSAGE_LOCK_TIME = 2 * 60 * 1000L;
     /**
      * 扫描消息
-     * 30s扫描
+     * 10s扫描
      */
     @Scheduled(cron = "*/10 * * * * ?")
     public void scannerMessage() {
@@ -99,7 +99,7 @@ public class TimingMessageScanner {
                 newDate = DateUtils.getOffMinutes(pushDateTime, pushCycleCount);
                 break;
             }
-            case HOURS: {
+            case HOUR: {
                 newDate = DateUtils.getOffHours(pushDateTime, pushCycleCount);
                 break;
             }
