@@ -12,4 +12,11 @@ public enum PushStateEnum {
     FINISH,
     FAILED,
     ;
+    public static PushStateEnum getByName(String name) {
+        try {
+            return PushStateEnum.valueOf(name);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
 }

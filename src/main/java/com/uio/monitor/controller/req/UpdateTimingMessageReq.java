@@ -10,12 +10,12 @@ import javax.validation.constraints.NotNull;
  * Description:
  */
 @Data
-public class UpdateTimingMessageReq extends AddTimingMessageReq{
+public class UpdateTimingMessageReq extends AddTimingMessageReq {
     /**
      * 消息ID
      */
     @NotNull
-    private Long messageID;
+    private Long timingMessageID;
     /**
      * 是否需要删除，TRUE是直接删除改定时消息
      */

@@ -46,7 +46,8 @@ public class TimingMessageService {
         return null;
     }
 
-    public List<TimingMessageDTO> getTimingMessageList(Long userId, Integer pageNum, Integer pageSize, String state) {
+    public List<TimingMessageDTO> getTimingMessageList(Long userId, Integer pageNum, Integer pageSize,
+                                                       PushStateEnum pushStateEnum, PushWayEnum pushWay, Boolean effective) {
         return null;
     }
 
