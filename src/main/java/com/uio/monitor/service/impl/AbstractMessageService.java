@@ -19,6 +19,7 @@ public abstract class AbstractMessageService implements PushMessageService {
 
     @Override
     public Boolean insertPushMessageData(PushMessageDO pushMessageDO) {
-        return null;
+        pushMessageManager.insert(pushMessageDO);
+        return true;
     }
 }

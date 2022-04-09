@@ -9,7 +9,9 @@ import com.uio.monitor.utils.URLConnection;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.Optional;
@@ -54,17 +56,24 @@ public class WeChatMessageService extends AbstractMessageService {
         pushMessageDO.setPushWay(PushWayEnum.WECHAT.name());
         pushMessageDO.setReceiver(receiver);
         pushMessageDO.setMessage(sendMessage);
-
-        String response = URLConnection.doPost(WECHAT_PUSH_MESSAGE_URL, jsonParam.toString());
-        JSONObject resJson = JSON.parseObject(response);
-        int code = Integer.parseInt(Optional.ofNullable(resJson.get("code")).orElse("").toString());
-        if (code == 200) {
-            log.info("send message to wechat receiver:{}, message:{}, response:{}", receiver, message, response);
-            String info = Optional.ofNullable(resJson.get("info")).orElse("").toString();
-            if (Boolean.TRUE.toString().equals(info)) {
-                super.insertPushMessageData(pushMessageDO);
-                return true;
+        String response = null;
+        if (!StringUtils.isEmpty(WECHAT_PUSH_MESSAGE_URL)) {
+            response = URLConnection.doPost(WECHAT_PUSH_MESSAGE_URL, jsonParam.toString());
+            JSONObject resJson = JSON.parseObject(response);
+            int code = Integer.parseInt(Optional.ofNullable(resJson.get("code")).orElse("").toString());
+            if (code == 200) {
+                log.info("send message to wechat receiver:{}, message:{}, response:{}", receiver, message, response);
+                String info = Optional.ofNullable(resJson.get("info")).orElse("").toString();
+                if (Boolean.TRUE.toString().equals(info)) {
+                    super.insertPushMessageData(pushMessageDO);
+                    return true;
+                }
             }
+        } else {
+            log.warn("WECHAT_PUSH_MESSAGE_URL is empty:{}, send message param:{}",
+                    WECHAT_PUSH_MESSAGE_URL, jsonParam.toString());
+            super.insertPushMessageData(pushMessageDO);
+            return true;
         }
         pushMessageDO.setState(PushStateEnum.FAILED.name());
         super.insertPushMessageData(pushMessageDO);
