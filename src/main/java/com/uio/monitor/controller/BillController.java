@@ -121,8 +121,8 @@ public class BillController extends BaseController {
         @RequestParam(value = "pageNum", required = false) Integer pageNum,
         @RequestParam(value = "pageSize", required = false) Integer pageSize,
         @RequestParam(value = "category", required = false) String category,
-        @RequestParam(value = "startTime", required = false) Date startTime,
-        @RequestParam(value = "endTime", required = false) Date endTime,
+        @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(value = "startTime", required = false) Date startTime,
+        @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(value = "endTime", required = false) Date endTime,
         @RequestParam(value = "type", required = true) String type) {
         pageNum = pageNum == null ? 1 : pageNum;
         pageSize = pageSize == null ? 10 : pageSize;
