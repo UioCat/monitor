@@ -50,9 +50,9 @@ public class UserController extends BaseController {
             throw new CustomException(BackEnum.ACCOUNT_EXIST);
         }
         // FIXME 先写死，后期修改
-        if (!"406453373".equals(registerReq.getVerifyCode())) {
-            throw new CustomException(BackEnum.UNAUTHORIZED_REGISTER);
-        }
+//        if (!"406453373".equals(registerReq.getVerifyCode())) {
+//            throw new CustomException(BackEnum.UNAUTHORIZED_REGISTER);
+//        }
         UserDO userDO = new UserDO();
         userDO.setCreator(registerReq.getAccount());
         userDO.setModifier(registerReq.getAccount());

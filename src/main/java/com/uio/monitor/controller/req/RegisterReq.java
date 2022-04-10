@@ -20,6 +20,8 @@ public class RegisterReq {
     private String password;
     @NotEmpty
     private String username;
-    @NotEmpty
+    /**
+     * 验证码
+     */
     private String verifyCode;
 }
