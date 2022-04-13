@@ -4,5 +4,5 @@ https://www.yuque.com/g/hanxun-ekb3e/qsrlfu/kkvhrs/collaborator/join?token=UHyWx
 ## 设计文档
 https://www.yuque.com/hanxun-ekb3e/qsrlfu/mz6hb2
 
-##其他
+## 其他
 运行时加入参数:`-Dspring.profiles.active=dev`
