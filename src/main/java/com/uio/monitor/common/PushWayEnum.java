@@ -7,8 +7,26 @@ package com.uio.monitor.common;
  */
 public enum PushWayEnum {
 
-    MAIL,
-    WECHAT,
-    MESSAGE,
+    MAIL("emailMessageService"),
+    WECHAT("weChatMessageService"),
+    MESSAGE("smsMessageService"),
     ;
+
+    private String serviceName;
+
+    PushWayEnum(String serviceName) {
+        this.serviceName = serviceName;
+    }
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public static PushWayEnum getByName(String name) {
+        try {
+            return PushWayEnum.valueOf(name);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
 }

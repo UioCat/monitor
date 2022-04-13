@@ -9,10 +9,18 @@ public enum CycleUnitEnum {
 
     NONE,
     MINUTE,
-    HOURS,
+    HOUR,
     DAY,
     WEEK,
     MONTH,
     YEAR,
     ;
+
+    public static CycleUnitEnum getByName(String name) {
+        try {
+            return CycleUnitEnum.valueOf(name);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
 }

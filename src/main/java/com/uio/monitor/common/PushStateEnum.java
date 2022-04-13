@@ -10,5 +10,13 @@ public enum PushStateEnum {
     INIT,
     PROCESSING,
     FINISH,
+    FAILED,
     ;
+    public static PushStateEnum getByName(String name) {
+        try {
+            return PushStateEnum.valueOf(name);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
 }

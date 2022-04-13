@@ -1,9 +1,25 @@
 package com.uio.monitor.service;
 
+
+import com.uio.monitor.common.PushWayEnum;
+import com.uio.monitor.entity.PushMessageDO;
+
 /**
  * @author han xun
  * Date 2022/3/30 20:40
- * Description:
+ * Description: 推送消息服务
  */
-public class PushMessageService {
+public interface PushMessageService {
+
+    /**
+     * 发送消息
+     * @return
+     */
+    Boolean sendMessage(String sender, String receiver, PushWayEnum pushWayEnum, String message);
+
+    /**
+     * 插入推送消息记录
+     * @return
+     */
+    Boolean insertPushMessageData(PushMessageDO pushMessageDO);
 }
