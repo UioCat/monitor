@@ -153,6 +153,7 @@ public class BillManager {
             criteria.andProduceTimeBetween(startDate, endDate);
         }
         criteria.andDeletedEqualTo(false);
+        example.setOrderByClause("produce_time ASC");
         return billDOMapper.selectByExample(example);
     }
 
