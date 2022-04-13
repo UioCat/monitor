@@ -71,10 +71,7 @@ public class TimingMessageDOExample {
             super();
             criteria = new ArrayList<Criterion>();
         }
-        public TimingMessageDOExample.Criteria andUserIdEqualTo(Long value) {
-            addCriterion("user_id =", value, "userId");
-            return (TimingMessageDOExample.Criteria) this;
-        }
+
         public boolean isValid() {
             return criteria.size() > 0;
         }

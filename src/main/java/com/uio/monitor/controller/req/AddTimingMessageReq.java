@@ -48,18 +48,4 @@ public class AddTimingMessageReq {
      */
     @NotNull
     private Boolean effective;
-    /**
-     * 创建消息者
-     */
-    @NotEmpty
-    private String creator;
-    /**
-     * 消息修改者
-     */
-    @NotEmpty
-    private String modifier;
-    /**
-     * 用户ID
-     */
-    private Long userId;
 }
