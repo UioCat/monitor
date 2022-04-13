@@ -58,7 +58,7 @@ public class BillManager {
      * @return
      */
     public List<BillDO> queryByBillType(Long userId, String billType, Integer pageNum, Integer pageSize,
-        Date startTime, Date endTime,
+        Date startTime, Date endTime, Boolean largeItem,
         String category) {
 
         PageHelper.startPage(pageNum, pageSize);
@@ -69,6 +69,9 @@ public class BillManager {
         }
         if (startTime != null && endTime != null) {
             criteria.andProduceTimeBetween(startTime, endTime);
+        }
+        if (largeItem != null) {
+            criteria.andLargeItemEqualTo(largeItem);
         }
         criteria.andUserIdEqualTo(userId);
         criteria.andBillTypeEqualTo(billType);
@@ -146,8 +149,11 @@ public class BillManager {
         BillDOExample example = new BillDOExample();
         BillDOExample.Criteria criteria = example.createCriteria();
         criteria.andUserIdEqualTo(userId);
-        criteria.andProduceTimeBetween(startDate, endDate);
+        if (startDate != null || endDate != null) {
+            criteria.andProduceTimeBetween(startDate, endDate);
+        }
         criteria.andDeletedEqualTo(false);
+        example.setOrderByClause("produce_time ASC");
         return billDOMapper.selectByExample(example);
     }
 

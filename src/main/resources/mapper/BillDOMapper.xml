@@ -15,6 +15,7 @@
     <result column="amount" jdbcType="DECIMAL" property="amount" />
     <result column="description" jdbcType="VARCHAR" property="description" />
     <result column="category" jdbcType="VARCHAR" property="category" />
+    <result column="large_item" jdbcType="BIT" property="largeItem" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -76,7 +77,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, user_id, gmt_create, gmt_modify, creator, modifier, deleted, produce_time, bill_type, 
-    produce_way, amount, description, category
+    produce_way, amount, description, category, large_item
   </sql>
   <select id="selectByExample" parameterType="com.uio.monitor.entity.BillDOExample" resultMap="BaseResultMap">
     select
@@ -113,12 +114,12 @@
       gmt_modify, creator, modifier, 
       deleted, produce_time, bill_type, 
       produce_way, amount, description, 
-      category)
+      category, large_item)
     values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{gmtCreate,jdbcType=TIMESTAMP}, 
       #{gmtModify,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, #{modifier,jdbcType=VARCHAR}, 
       #{deleted,jdbcType=BIT}, #{produceTime,jdbcType=DATE}, #{billType,jdbcType=VARCHAR}, 
       #{produceWay,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}, #{description,jdbcType=VARCHAR}, 
-      #{category,jdbcType=VARCHAR})
+      #{category,jdbcType=VARCHAR}, #{largeItem,jdbcType=BIT})
   </insert>
   <insert id="insertSelective" parameterType="com.uio.monitor.entity.BillDO">
     insert into tb_bill
@@ -162,6 +163,9 @@
       <if test="category != null">
         category,
       </if>
+      <if test="largeItem != null">
+        large_item,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -202,6 +206,9 @@
       </if>
       <if test="category != null">
         #{category,jdbcType=VARCHAR},
+      </if>
+      <if test="largeItem != null">
+        #{largeItem,jdbcType=BIT},
       </if>
     </trim>
   </insert>
@@ -253,6 +260,9 @@
       <if test="record.category != null">
         category = #{record.category,jdbcType=VARCHAR},
       </if>
+      <if test="record.largeItem != null">
+        large_item = #{record.largeItem,jdbcType=BIT},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -272,7 +282,8 @@
       produce_way = #{record.produceWay,jdbcType=VARCHAR},
       amount = #{record.amount,jdbcType=DECIMAL},
       description = #{record.description,jdbcType=VARCHAR},
-      category = #{record.category,jdbcType=VARCHAR}
+      category = #{record.category,jdbcType=VARCHAR},
+      large_item = #{record.largeItem,jdbcType=BIT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -316,6 +327,9 @@
       <if test="category != null">
         category = #{category,jdbcType=VARCHAR},
       </if>
+      <if test="largeItem != null">
+        large_item = #{largeItem,jdbcType=BIT},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -332,7 +346,8 @@
       produce_way = #{produceWay,jdbcType=VARCHAR},
       amount = #{amount,jdbcType=DECIMAL},
       description = #{description,jdbcType=VARCHAR},
-      category = #{category,jdbcType=VARCHAR}
+      category = #{category,jdbcType=VARCHAR},
+      large_item = #{largeItem,jdbcType=BIT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

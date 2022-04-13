@@ -13,6 +13,7 @@ import com.uio.monitor.controller.resp.BillStatisticsDTO;
 import com.uio.monitor.entity.BillDO;
 import com.uio.monitor.manager.BillManager;
 import com.uio.monitor.manager.ConfigManager;
+import com.uio.monitor.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,9 @@ public class BillService {
 
 
     private static final String TOTAL_AMOUNT_CATEGORY = "总金额";
+    private static final String LARGE_ITEM = "大件消费总额";
+    private static final String AVE_MONTH_LARGE_ITEM = "大件消费月均";
+    private static final String AVE_DAY_LARGE_ITEM = "大件消费日均";
 
     @Autowired
     private BillManager billManager;
@@ -67,6 +71,8 @@ public class BillService {
         billDO.setDescription(addBillReq.getDesc());
         billDO.setCategory(addBillReq.getType());
         billDO.setDeleted(false);
+        // 默认加入账单不为大件
+        billDO.setLargeItem(false);
         billManager.insert(billDO);
         return true;
     }
@@ -77,11 +83,12 @@ public class BillService {
      * @param pageSize
      * @param userId
      * @param category
+     * @param largeItem 空的时候不筛选
      * @param billType
      * @return
      */
     public PageInfo<BillDTO> getBillList(Integer pageNum, Integer pageSize, Long userId, String category,
-        Date startTime, Date endTime,
+        Date startTime, Date endTime, Boolean largeItem,
         String billType) {
         PageInfo<BillDTO> res = new PageInfo<>();
         res.setPageNum(pageSize);
@@ -89,7 +96,7 @@ public class BillService {
         res.setTotal(0);
 
         List<BillDO> billDOList = billManager.queryByBillType(userId, billType, pageNum, pageSize,
-                startTime, endTime, category);
+                startTime, endTime, largeItem, category);
         if (CollectionUtils.isEmpty(billDOList)) {
             return res;
         }
@@ -126,6 +133,7 @@ public class BillService {
             billDOUpdate.setAmount(updateBillReq.getAmount());
             billDOUpdate.setDescription(updateBillReq.getDesc());
             billDOUpdate.setCategory(updateBillReq.getCategory());
+            billDOUpdate.setLargeItem(updateBillReq.getLargeItem());
             billManager.updateBillById(billDOUpdate);
         }
         return true;
@@ -181,30 +189,71 @@ public class BillService {
         return resultList;
     }
 
-    public List<BillStatisticsDTO> getBillStatistics(Long userId, Date startDate, Date endDate) {
+    public List<BillStatisticsDTO> getBillStatistics(Long userId, Date startDate, Date endDate, Boolean largeItem) {
+        List<BillStatisticsDTO> res = new ArrayList<>();
         List<BillDO> billDOList = billManager.queryByDate(userId, startDate, endDate);
-        Map<String, List<BillDO>> billGroupByCategoryMap = billDOList.stream().collect(Collectors.groupingBy(BillDO::getCategory));
-        Set<Map.Entry<String, List<BillDO>>> entries = billGroupByCategoryMap.entrySet();
-
-        List<BillStatisticsDTO> res = new ArrayList<>(entries.size());
-        Double totalAmount = 0.0;
-        for (Map.Entry<String, List<BillDO>> entry : entries) {
-            List<BillDO> billDOListInCategory = entry.getValue();
-            if (CollectionUtils.isEmpty(billDOListInCategory)) {
-                continue;
-            }
-            double sum = billDOListInCategory.stream().mapToDouble(billDO -> billDO.getAmount().doubleValue()).sum();
-            totalAmount += sum;
-            BillStatisticsDTO billStatisticsDTO = new BillStatisticsDTO();
-            billStatisticsDTO.setCategory(entry.getKey());
-            billStatisticsDTO.setAmount(sum);
-            res.add(billStatisticsDTO);
+        if (CollectionUtils.isEmpty(billDOList)) {
+            // billDOList 空数据处理
+            return Collections.emptyList();
         }
-        BillStatisticsDTO billStatisticsDTO = new BillStatisticsDTO();
-        billStatisticsDTO.setCategory(TOTAL_AMOUNT_CATEGORY);
-        billStatisticsDTO.setAmount(totalAmount);
-        res.add(0, billStatisticsDTO);
-        return res;
+        if (Boolean.TRUE.equals(largeItem)) {
+            // 大件统计数据
+            double largeItemAmount = 0.0;
+            // 属于大件的金额
+            largeItemAmount = billDOList.stream().filter(BillDO::getLargeItem)
+                    .mapToDouble(billDO -> billDO.getAmount().doubleValue()).sum();
+            Date earliestTime = billDOList.get(0).getProduceTime();
+            Date latestTime = billDOList.get(billDOList.size() - 1).getProduceTime();
+
+            BillStatisticsDTO largeItemStatisticsDTO = new BillStatisticsDTO();
+            largeItemStatisticsDTO.setCategory(LARGE_ITEM);
+            largeItemStatisticsDTO.setAmount(new BigDecimal(largeItemAmount).setScale(2, BigDecimal.ROUND_HALF_DOWN));
+
+            BillStatisticsDTO monthLargeItemStatisticsDTO = new BillStatisticsDTO();
+            monthLargeItemStatisticsDTO.setCategory(AVE_MONTH_LARGE_ITEM);
+            monthLargeItemStatisticsDTO.setAmount(new BigDecimal(
+                    largeItemAmount / (Utils.getApartMonths(earliestTime, latestTime) + 1))
+                    .setScale(2, BigDecimal.ROUND_HALF_DOWN));
+
+            BillStatisticsDTO dayLargeItemStatisticsDTO = new BillStatisticsDTO();
+            dayLargeItemStatisticsDTO.setCategory(AVE_DAY_LARGE_ITEM);
+            dayLargeItemStatisticsDTO.setAmount(new BigDecimal(
+                    largeItemAmount / (Utils.getApartDays(earliestTime, latestTime) + 1))
+                    .setScale(2, BigDecimal.ROUND_HALF_DOWN));
+            res.add(largeItemStatisticsDTO);
+            res.add(monthLargeItemStatisticsDTO);
+            res.add(dayLargeItemStatisticsDTO);
+            log.info("record earliestTime:{}, latestTime:{}, calMonth:{}, calDays:{}",
+                    earliestTime, latestTime,
+                    Utils.getApartMonths(earliestTime, latestTime) + 1,
+                    Utils.getApartDays(earliestTime, latestTime) + 1);
+            return res;
+        } else {
+            Map<String, List<BillDO>> billGroupByCategoryMap = billDOList.stream().collect(Collectors.groupingBy(BillDO::getCategory));
+            Set<Map.Entry<String, List<BillDO>>> entries = billGroupByCategoryMap.entrySet();
+
+            double totalAmount = 0.0;
+            for (Map.Entry<String, List<BillDO>> entry : entries) {
+                List<BillDO> billDOListInCategory = entry.getValue();
+                if (CollectionUtils.isEmpty(billDOListInCategory)) {
+                    continue;
+                }
+                double sum = billDOListInCategory.stream().mapToDouble(billDO -> billDO.getAmount().doubleValue()).sum();
+
+                totalAmount += sum;
+                BillStatisticsDTO billStatisticsDTO = new BillStatisticsDTO();
+                billStatisticsDTO.setCategory(entry.getKey());
+                billStatisticsDTO.setAmount(new BigDecimal(sum)
+                        .setScale(2, BigDecimal.ROUND_HALF_DOWN));
+                res.add(billStatisticsDTO);
+            }
+            BillStatisticsDTO billStatisticsDTO = new BillStatisticsDTO();
+            billStatisticsDTO.setCategory(TOTAL_AMOUNT_CATEGORY);
+            billStatisticsDTO.setAmount(new BigDecimal(totalAmount)
+                    .setScale(2, BigDecimal.ROUND_HALF_DOWN));
+            res.add(0, billStatisticsDTO);
+            return res;
+        }
     }
 
     private BillDTO convertBillDTO(BillDO billDO) {
@@ -216,6 +265,7 @@ public class BillService {
         billDTO.setAmount(billDO.getAmount());
         billDTO.setDesc(billDO.getDescription());
         billDTO.setCategory(billDO.getCategory());
+        billDTO.setLargeItem(billDO.getLargeItem());
         return billDTO;
     }
 

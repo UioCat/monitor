@@ -972,6 +972,66 @@ public class BillDOExample {
             addCriterion("category not between", value1, value2, "category");
             return (Criteria) this;
         }
+
+        public Criteria andLargeItemIsNull() {
+            addCriterion("large_item is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLargeItemIsNotNull() {
+            addCriterion("large_item is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLargeItemEqualTo(Boolean value) {
+            addCriterion("large_item =", value, "largeItem");
+            return (Criteria) this;
+        }
+
+        public Criteria andLargeItemNotEqualTo(Boolean value) {
+            addCriterion("large_item <>", value, "largeItem");
+            return (Criteria) this;
+        }
+
+        public Criteria andLargeItemGreaterThan(Boolean value) {
+            addCriterion("large_item >", value, "largeItem");
+            return (Criteria) this;
+        }
+
+        public Criteria andLargeItemGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("large_item >=", value, "largeItem");
+            return (Criteria) this;
+        }
+
+        public Criteria andLargeItemLessThan(Boolean value) {
+            addCriterion("large_item <", value, "largeItem");
+            return (Criteria) this;
+        }
+
+        public Criteria andLargeItemLessThanOrEqualTo(Boolean value) {
+            addCriterion("large_item <=", value, "largeItem");
+            return (Criteria) this;
+        }
+
+        public Criteria andLargeItemIn(List<Boolean> values) {
+            addCriterion("large_item in", values, "largeItem");
+            return (Criteria) this;
+        }
+
+        public Criteria andLargeItemNotIn(List<Boolean> values) {
+            addCriterion("large_item not in", values, "largeItem");
+            return (Criteria) this;
+        }
+
+        public Criteria andLargeItemBetween(Boolean value1, Boolean value2) {
+            addCriterion("large_item between", value1, value2, "largeItem");
+            return (Criteria) this;
+        }
+
+        public Criteria andLargeItemNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("large_item not between", value1, value2, "largeItem");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

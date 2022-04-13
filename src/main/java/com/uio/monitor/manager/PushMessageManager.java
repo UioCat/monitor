@@ -18,6 +18,18 @@ public class PushMessageManager {
     @Autowired
     private PushMessageDOMapper pushMessageDOMapper;
 
+    /**
+     * 查询待发送的消息
+     * @return
+     */
+    public List<PushMessageDO> queryReadyMessage() {
+        PushMessageDOExample example = new PushMessageDOExample();
+        PushMessageDOExample.Criteria criteria = example.createCriteria();
+        criteria.andStateEqualTo(PushStateEnum.INIT.name());
+        criteria.andDeletedEqualTo(false);
+        return pushMessageDOMapper.selectByExample(example);
+    }
+  
     public void insert(PushMessageDO pushMessageDO) {
         pushMessageDO.setGmtModify(new Date());
         pushMessageDO.setGmtCreate(new Date());

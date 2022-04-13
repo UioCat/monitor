@@ -115,6 +115,7 @@ public class BillController extends BaseController {
 
     /**
      * 获取账单列表
+     * @param largeItem 空的时候不筛选
      */
     @GetMapping("/getBillList")
     public BackMessage<PageInfo<BillDTO>> getBillList(
@@ -123,12 +124,13 @@ public class BillController extends BaseController {
         @RequestParam(value = "category", required = false) String category,
         @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(value = "startTime", required = false) Date startTime,
         @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(value = "endTime", required = false) Date endTime,
+        @RequestParam(value = "largeItem", required = false) Boolean largeItem,
         @RequestParam(value = "type", required = true) String type) {
         pageNum = pageNum == null ? 1 : pageNum;
         pageSize = pageSize == null ? 10 : pageSize;
         Long userId = super.getUserId();
         PageInfo<BillDTO> billList = billService.getBillList(pageNum, pageSize, userId, category,
-                startTime, endTime, type);
+                startTime, endTime, largeItem, type);
         return BackMessage.success(billList);
     }
 
@@ -149,9 +151,11 @@ public class BillController extends BaseController {
      */
     @GetMapping("/getStatistics")
     public BackMessage<List<BillStatisticsDTO>> getStatistics(
-        @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(value = "startDate") Date startDate,
-        @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(value = "endDate") Date endDate) {
-        List<BillStatisticsDTO> billStatistics = billService.getBillStatistics(super.getUserId(), startDate, endDate);
+        @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(value = "startDate", required = false) Date startDate,
+        @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(value = "endDate", required = false) Date endDate,
+        @RequestParam(value = "largeItem", required = false) Boolean largeItem) {
+        List<BillStatisticsDTO> billStatistics = billService.getBillStatistics(super.getUserId(), startDate, endDate,
+                largeItem);
         return BackMessage.success(billStatistics);
     }
 }
