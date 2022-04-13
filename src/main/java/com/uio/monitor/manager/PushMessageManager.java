@@ -29,7 +29,6 @@ public class PushMessageManager {
         PushMessageDOExample example = new PushMessageDOExample();
         PushMessageDOExample.Criteria criteria = example.createCriteria();
         criteria.andStateEqualTo(PushStateEnum.INIT.name());
-        criteria.andPushDateTimeLessThanOrEqualTo(new Date());
         criteria.andDeletedEqualTo(false);
         return pushMessageDOMapper.selectByExample(example);
     }

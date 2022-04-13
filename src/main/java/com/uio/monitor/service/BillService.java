@@ -35,6 +35,7 @@ public class BillService {
 
 
     private static final String TOTAL_AMOUNT_CATEGORY = "总金额";
+    private static final String LARGE_ITEM = "LARGE_ITEM_大件";
 
     @Autowired
     private BillManager billManager;
@@ -67,6 +68,8 @@ public class BillService {
         billDO.setDescription(addBillReq.getDesc());
         billDO.setCategory(addBillReq.getType());
         billDO.setDeleted(false);
+        // 默认加入账单不为大件
+        billDO.setLargeItem(false);
         billManager.insert(billDO);
         return true;
     }
@@ -77,11 +80,12 @@ public class BillService {
      * @param pageSize
      * @param userId
      * @param category
+     * @param largeItem 空的时候不筛选
      * @param billType
      * @return
      */
     public PageInfo<BillDTO> getBillList(Integer pageNum, Integer pageSize, Long userId, String category,
-        Date startTime, Date endTime,
+        Date startTime, Date endTime, Boolean largeItem,
         String billType) {
         PageInfo<BillDTO> res = new PageInfo<>();
         res.setPageNum(pageSize);
@@ -89,7 +93,7 @@ public class BillService {
         res.setTotal(0);
 
         List<BillDO> billDOList = billManager.queryByBillType(userId, billType, pageNum, pageSize,
-                startTime, endTime, category);
+                startTime, endTime, largeItem, category);
         if (CollectionUtils.isEmpty(billDOList)) {
             return res;
         }
@@ -126,6 +130,7 @@ public class BillService {
             billDOUpdate.setAmount(updateBillReq.getAmount());
             billDOUpdate.setDescription(updateBillReq.getDesc());
             billDOUpdate.setCategory(updateBillReq.getCategory());
+            billDOUpdate.setLargeItem(updateBillReq.getLargeItem());
             billManager.updateBillById(billDOUpdate);
         }
         return true;
@@ -181,24 +186,35 @@ public class BillService {
         return resultList;
     }
 
-    public List<BillStatisticsDTO> getBillStatistics(Long userId, Date startDate, Date endDate) {
+    public List<BillStatisticsDTO> getBillStatistics(Long userId, Date startDate, Date endDate, Boolean largeItem) {
         List<BillDO> billDOList = billManager.queryByDate(userId, startDate, endDate);
         Map<String, List<BillDO>> billGroupByCategoryMap = billDOList.stream().collect(Collectors.groupingBy(BillDO::getCategory));
         Set<Map.Entry<String, List<BillDO>>> entries = billGroupByCategoryMap.entrySet();
 
         List<BillStatisticsDTO> res = new ArrayList<>(entries.size());
         Double totalAmount = 0.0;
+        Double largeItemAmount = 0.0;
         for (Map.Entry<String, List<BillDO>> entry : entries) {
             List<BillDO> billDOListInCategory = entry.getValue();
             if (CollectionUtils.isEmpty(billDOListInCategory)) {
                 continue;
             }
             double sum = billDOListInCategory.stream().mapToDouble(billDO -> billDO.getAmount().doubleValue()).sum();
+            // 该类型下属于大件的金额
+            largeItemAmount = largeItemAmount + billDOListInCategory.stream().filter(BillDO::getLargeItem)
+                    .mapToDouble(billDO -> billDO.getAmount().doubleValue()).sum();
             totalAmount += sum;
             BillStatisticsDTO billStatisticsDTO = new BillStatisticsDTO();
             billStatisticsDTO.setCategory(entry.getKey());
             billStatisticsDTO.setAmount(sum);
             res.add(billStatisticsDTO);
+        }
+        // 需要大货统计数据
+        if (Boolean.TRUE.equals(largeItem)) {
+            BillStatisticsDTO largeItemStatisticsDTO = new BillStatisticsDTO();
+            largeItemStatisticsDTO.setCategory(LARGE_ITEM);
+            largeItemStatisticsDTO.setAmount(largeItemAmount);
+            res.add(largeItemStatisticsDTO);
         }
         BillStatisticsDTO billStatisticsDTO = new BillStatisticsDTO();
         billStatisticsDTO.setCategory(TOTAL_AMOUNT_CATEGORY);
@@ -216,6 +232,7 @@ public class BillService {
         billDTO.setAmount(billDO.getAmount());
         billDTO.setDesc(billDO.getDescription());
         billDTO.setCategory(billDO.getCategory());
+        billDTO.setLargeItem(billDO.getLargeItem());
         return billDTO;
     }
 
