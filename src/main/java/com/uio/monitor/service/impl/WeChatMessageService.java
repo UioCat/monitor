@@ -28,7 +28,7 @@ public class WeChatMessageService extends AbstractMessageService {
     private final static String WECHAT_MESSAGE = "message";
     private final static String VERIFY_CODE = "verifyCode";
 
-    @Value("${push-message.wechat-url}")
+    @Value("${push-message.wechat-url:}")
     private String WECHAT_PUSH_MESSAGE_URL;
 
     @Override
