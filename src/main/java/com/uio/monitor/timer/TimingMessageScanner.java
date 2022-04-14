@@ -55,11 +55,11 @@ public class TimingMessageScanner {
                 if (lock) {
                     String pushWay = item.getPushWay();
                     PushWayEnum pushWayEnum = PushWayEnum.getByName(pushWay);
-               //     if (pushWayEnum == null) {
-                //        log.warn("pushWayEnum is null, timingMessageDO:{}", JSON.toJSONString(item));
-                 //       throw new CustomException(BackEnum.DATA_ERROR);
-               //     }
-         //           timingMessageService.sendMessage(pushWayEnum, item);
+                    if (pushWayEnum == null) {
+                        log.warn("pushWayEnum is null, timingMessageDO:{}", JSON.toJSONString(item));
+                        throw new CustomException(BackEnum.DATA_ERROR);
+                    }
+                    timingMessageService.sendMessage(pushWayEnum, item);
                 }
             } finally {
                 cacheService.unLock(lockName, uuid);
