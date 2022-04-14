@@ -71,7 +71,6 @@ public class TimingMessageDOExample {
             super();
             criteria = new ArrayList<Criterion>();
         }
-
         public boolean isValid() {
             return criteria.size() > 0;
         }

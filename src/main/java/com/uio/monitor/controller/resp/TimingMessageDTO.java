@@ -14,6 +14,9 @@ public class TimingMessageDTO {
 
     private Long timingMessageId;
 
+    /**
+     * 消息推送时间
+     */
     private Date pushDateTime;
 
     /**

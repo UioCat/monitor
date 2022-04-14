@@ -1,5 +1,7 @@
 package com.uio.monitor.controller;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageInfo;
 import com.uio.monitor.common.BackMessage;
 import com.uio.monitor.common.PushStateEnum;
 import com.uio.monitor.common.PushWayEnum;
@@ -56,7 +58,7 @@ public class TimingMessageController extends BaseController {
      * @return
      */
     @GetMapping("/getTimingMessageList")
-    public BackMessage<List<TimingMessageDTO>> getTimingMessageList(@RequestParam(value = "pageNum", required = false) Integer pageNum,
+    public BackMessage<PageInfo<TimingMessageDTO>> getTimingMessageList(@RequestParam(value = "pageNum", required = false) Integer pageNum,
                                                                     @RequestParam(value = "pageSize", required = false) Integer pageSize,
                                                                     @RequestParam(value = "state", required = false) String state,
                                                                     @RequestParam(value = "pushWay", required = false) String pushWay,
@@ -66,9 +68,8 @@ public class TimingMessageController extends BaseController {
         pageSize = pageSize == null ? 10 : pageSize;
         PushStateEnum pushStateEnum = StringUtils.isEmpty(state) ? null : PushStateEnum.getByName(state);
         PushWayEnum pushWayEnum = StringUtils.isEmpty(pushWay) ? null : PushWayEnum.getByName(pushWay);
-
-        List<TimingMessageDTO> timingMessageList = timingMessageService
-                .getTimingMessageList(super.getUserId(), pageNum, pageSize, pushStateEnum, pushWayEnum, effective);
+        PageInfo<TimingMessageDTO> timingMessageList = timingMessageService.getTimingMessageList
+                (super.getUserId(), pageNum, pageSize, pushStateEnum, pushWayEnum, effective);
         return BackMessage.success(timingMessageList);
     }
 }
