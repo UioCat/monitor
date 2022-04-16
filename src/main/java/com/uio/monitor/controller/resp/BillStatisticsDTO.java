@@ -2,6 +2,8 @@ package com.uio.monitor.controller.resp;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 /**
  * @author han xun
  * Date 2022/2/13 13:18
@@ -17,5 +19,5 @@ public class BillStatisticsDTO {
     /**
      * 金额
      */
-    private Double amount;
+    private BigDecimal amount;
 }

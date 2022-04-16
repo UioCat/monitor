@@ -30,6 +30,8 @@ public class BillDO {
 
     private String category;
 
+    private Boolean largeItem;
+
     public Long getId() {
         return id;
     }
@@ -132,5 +134,13 @@ public class BillDO {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public Boolean getLargeItem() {
+        return largeItem;
+    }
+
+    public void setLargeItem(Boolean largeItem) {
+        this.largeItem = largeItem;
     }
 }

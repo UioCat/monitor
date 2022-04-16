@@ -36,4 +36,9 @@ public class BillDTO {
     private String desc;
 
     private String category;
+    /**
+     * 是否为大件
+     * true：大件
+     */
+    private Boolean largeItem;
 }
