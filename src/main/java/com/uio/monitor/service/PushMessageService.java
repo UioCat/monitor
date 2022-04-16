@@ -15,11 +15,15 @@ public interface PushMessageService {
      * 发送消息
      * @return
      */
-    Boolean sendMessage(String sender, String receiver, PushWayEnum pushWayEnum, String message);
+    Boolean sendMessage(String sourceId, String sender, String receiver, PushWayEnum pushWayEnum, String message);
 
     /**
      * 插入推送消息记录
      * @return
      */
     Boolean insertPushMessageData(PushMessageDO pushMessageDO);
+
+    default String getSourceId(String pushWayName, String id) {
+        return pushWayName + "_" + id;
+    }
 }

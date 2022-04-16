@@ -2,6 +2,8 @@ package com.uio.monitor.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.uio.monitor.common.BackEnum;
+import com.uio.monitor.common.CustomException;
 import com.uio.monitor.common.PushStateEnum;
 import com.uio.monitor.common.PushWayEnum;
 import com.uio.monitor.entity.PushMessageDO;
@@ -32,9 +34,10 @@ public class WeChatMessageService extends AbstractMessageService {
     private String WECHAT_PUSH_MESSAGE_URL;
 
     @Override
-    public Boolean sendMessage(String sender, String receiver, PushWayEnum pushWayEnum, String message) {
+    public Boolean sendMessage(String sourceId, String sender, String receiver, PushWayEnum pushWayEnum, String message) {
         if (ObjectUtils.isEmpty(message)) {
-            log.warn("push to wechat, but message is empty, receiver:{}, sender:{}", receiver, sender);
+            log.warn("push to wechat, but message is empty, sourceId:{}, receiver:{}, sender:{}",
+                    sourceId, receiver, sender);
             return false;
         }
 
@@ -54,8 +57,10 @@ public class WeChatMessageService extends AbstractMessageService {
         pushMessageDO.setDeleted(false);
         pushMessageDO.setState(PushStateEnum.FINISH.name());
         pushMessageDO.setPushWay(PushWayEnum.WECHAT.name());
+        pushMessageDO.setSender(sender);
         pushMessageDO.setReceiver(receiver);
         pushMessageDO.setMessage(sendMessage);
+        pushMessageDO.setSourceid(sourceId);
         String response = null;
         if (!StringUtils.isEmpty(WECHAT_PUSH_MESSAGE_URL)) {
             response = URLConnection.doPost(WECHAT_PUSH_MESSAGE_URL, jsonParam.toString());
@@ -65,19 +70,24 @@ public class WeChatMessageService extends AbstractMessageService {
                 log.info("send message to wechat receiver:{}, message:{}, response:{}", receiver, message, response);
                 String info = Optional.ofNullable(resJson.get("info")).orElse("").toString();
                 if (Boolean.TRUE.toString().equals(info)) {
+                    // 发送成功，插入成功状态的数据
                     super.insertPushMessageData(pushMessageDO);
+                    log.info("insert push message data success sourceId:{}", sourceId);
                     return true;
                 }
+            } else {
+                log.warn("send message to wechat fail, code:{} resJSON:{}", code, JSON.toJSONString(resJson));
             }
         } else {
             log.warn("WECHAT_PUSH_MESSAGE_URL is empty:{}, send message param:{}",
                     WECHAT_PUSH_MESSAGE_URL, jsonParam.toString());
             super.insertPushMessageData(pushMessageDO);
-            return true;
         }
+        // 发送不成功的所有情况，都插入FAILED
         pushMessageDO.setState(PushStateEnum.FAILED.name());
         super.insertPushMessageData(pushMessageDO);
-        log.warn("send message fail, receiver:{}, message:{}, response:{}", receiver, message, response);
+        log.warn("send message fail, receiver:{}, message:{}, jsonParam:{}, response:{} url:{}",
+                receiver, message, jsonParam, response, WECHAT_PUSH_MESSAGE_URL);
         return false;
     }
 }

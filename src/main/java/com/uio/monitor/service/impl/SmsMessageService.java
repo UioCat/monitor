@@ -14,7 +14,7 @@ public class SmsMessageService extends AbstractMessageService {
 
 
     @Override
-    public Boolean sendMessage(String sender, String receiver, PushWayEnum pushWayEnum, String message) {
+    public Boolean sendMessage(String sourceId, String sender, String receiver, PushWayEnum pushWayEnum, String message) {
         return null;
     }
 }
