@@ -65,18 +65,20 @@ public class WeChatMessageService extends AbstractMessageService {
         if (!StringUtils.isEmpty(WECHAT_PUSH_MESSAGE_URL)) {
             response = URLConnection.doPost(WECHAT_PUSH_MESSAGE_URL, jsonParam.toString());
             JSONObject resJson = JSON.parseObject(response);
-            int code = Integer.parseInt(Optional.ofNullable(resJson.get("code")).orElse("").toString());
-            if (code == 200) {
-                log.info("send message to wechat receiver:{}, message:{}, response:{}", receiver, message, response);
-                String info = Optional.ofNullable(resJson.get("info")).orElse("").toString();
-                if (Boolean.TRUE.toString().equals(info)) {
-                    // 发送成功，插入成功状态的数据
-                    super.insertPushMessageData(pushMessageDO);
-                    log.info("insert push message data success sourceId:{}", sourceId);
-                    return true;
+            if (response != null) {
+                int code = Integer.parseInt(Optional.ofNullable(resJson.get("code")).orElse("").toString());
+                if (code == 200) {
+                    log.info("send message to wechat receiver:{}, message:{}, response:{}", receiver, message, response);
+                    String info = Optional.ofNullable(resJson.get("info")).orElse("").toString();
+                    if (Boolean.TRUE.toString().equals(info)) {
+                        // 发送成功，插入成功状态的数据
+                        super.insertPushMessageData(pushMessageDO);
+                        log.info("insert push message data success sourceId:{}", sourceId);
+                        return true;
+                    }
+                } else {
+                    log.warn("send message to wechat fail, code:{} resJSON:{}", code, JSON.toJSONString(resJson));
                 }
-            } else {
-                log.warn("send message to wechat fail, code:{} resJSON:{}", code, JSON.toJSONString(resJson));
             }
         } else {
             log.warn("WECHAT_PUSH_MESSAGE_URL is empty:{}, send message param:{}",
