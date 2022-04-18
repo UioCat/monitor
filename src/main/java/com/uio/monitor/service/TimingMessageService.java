@@ -115,8 +115,8 @@ public class TimingMessageService {
         res.setPageSize(pageSize);
         res.setTotal(0);
 
-        List<TimingMessageDO> timingMessageDOList = timingMessageManager.queryUserTimingMessage(userId, pageSize,
-                pageNum, pushStateEnum, pushWayEnum, effective);
+        List<TimingMessageDO> timingMessageDOList = timingMessageManager.queryUserTimingMessage(userId, pageNum,
+                pageSize, pushStateEnum, pushWayEnum, effective);
         if (CollectionUtils.isEmpty(timingMessageDOList)){
             return res;
         }

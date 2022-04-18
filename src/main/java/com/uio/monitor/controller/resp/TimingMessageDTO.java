@@ -1,5 +1,6 @@
 package com.uio.monitor.controller.resp;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.util.Date;
@@ -19,6 +20,7 @@ public class TimingMessageDTO {
     /**
      * 消息推送时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date pushDateTime;
     /**
      * 消息推送状态

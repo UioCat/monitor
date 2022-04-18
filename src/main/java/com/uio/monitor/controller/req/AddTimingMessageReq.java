@@ -1,6 +1,8 @@
 package com.uio.monitor.controller.req;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -17,6 +19,8 @@ public class AddTimingMessageReq {
      * 推送时间
      */
     @NotNull
+    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date pushDateTime;
     /**
      * 推送途径
