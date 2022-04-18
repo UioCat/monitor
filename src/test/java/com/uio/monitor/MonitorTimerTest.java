@@ -31,6 +31,5 @@ public class MonitorTimerTest {
     @Test
     public void restartTomcatTest() {
 //        Vector<String> execute = SSHCommandUtils.execute("192.168.31.102", "root", "waiwai", "/usr/java/apache-tomcat-9.0.33/bin/startup.sh");
-
     }
 }

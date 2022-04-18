@@ -5,11 +5,13 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
     <result column="gmt_modify" jdbcType="TIMESTAMP" property="gmtModify" />
+    <result column="sourceId" jdbcType="VARCHAR" property="sourceid" />
     <result column="creator" jdbcType="VARCHAR" property="creator" />
     <result column="modifier" jdbcType="VARCHAR" property="modifier" />
     <result column="deleted" jdbcType="BIT" property="deleted" />
     <result column="state" jdbcType="VARCHAR" property="state" />
     <result column="push_way" jdbcType="VARCHAR" property="pushWay" />
+    <result column="sender" jdbcType="VARCHAR" property="sender" />
     <result column="receiver" jdbcType="VARCHAR" property="receiver" />
     <result column="message" jdbcType="VARCHAR" property="message" />
   </resultMap>
@@ -72,8 +74,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, gmt_create, gmt_modify, creator, modifier, deleted, state, push_way, receiver, 
-    message
+    id, gmt_create, gmt_modify, sourceId, creator, modifier, deleted, state, push_way, 
+    sender, receiver, message
   </sql>
   <select id="selectByExample" parameterType="com.uio.monitor.entity.PushMessageDOExample" resultMap="BaseResultMap">
     select
@@ -107,13 +109,15 @@
   </delete>
   <insert id="insert" parameterType="com.uio.monitor.entity.PushMessageDO">
     insert into tb_push_message (id, gmt_create, gmt_modify, 
-      creator, modifier, deleted, 
-      state, push_way, receiver, 
-      message)
+      sourceId, creator, modifier, 
+      deleted, state, push_way, 
+      sender, receiver, message
+      )
     values (#{id,jdbcType=BIGINT}, #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModify,jdbcType=TIMESTAMP}, 
-      #{creator,jdbcType=VARCHAR}, #{modifier,jdbcType=VARCHAR}, #{deleted,jdbcType=BIT}, 
-      #{state,jdbcType=VARCHAR}, #{pushWay,jdbcType=VARCHAR}, #{receiver,jdbcType=VARCHAR}, 
-      #{message,jdbcType=VARCHAR})
+      #{sourceid,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, #{modifier,jdbcType=VARCHAR}, 
+      #{deleted,jdbcType=BIT}, #{state,jdbcType=VARCHAR}, #{pushWay,jdbcType=VARCHAR}, 
+      #{sender,jdbcType=VARCHAR}, #{receiver,jdbcType=VARCHAR}, #{message,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.uio.monitor.entity.PushMessageDO">
     insert into tb_push_message
@@ -126,6 +130,9 @@
       </if>
       <if test="gmtModify != null">
         gmt_modify,
+      </if>
+      <if test="sourceid != null">
+        sourceId,
       </if>
       <if test="creator != null">
         creator,
@@ -141,6 +148,9 @@
       </if>
       <if test="pushWay != null">
         push_way,
+      </if>
+      <if test="sender != null">
+        sender,
       </if>
       <if test="receiver != null">
         receiver,
@@ -159,6 +169,9 @@
       <if test="gmtModify != null">
         #{gmtModify,jdbcType=TIMESTAMP},
       </if>
+      <if test="sourceid != null">
+        #{sourceid,jdbcType=VARCHAR},
+      </if>
       <if test="creator != null">
         #{creator,jdbcType=VARCHAR},
       </if>
@@ -173,6 +186,9 @@
       </if>
       <if test="pushWay != null">
         #{pushWay,jdbcType=VARCHAR},
+      </if>
+      <if test="sender != null">
+        #{sender,jdbcType=VARCHAR},
       </if>
       <if test="receiver != null">
         #{receiver,jdbcType=VARCHAR},
@@ -200,6 +216,9 @@
       <if test="record.gmtModify != null">
         gmt_modify = #{record.gmtModify,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.sourceid != null">
+        sourceId = #{record.sourceid,jdbcType=VARCHAR},
+      </if>
       <if test="record.creator != null">
         creator = #{record.creator,jdbcType=VARCHAR},
       </if>
@@ -214,6 +233,9 @@
       </if>
       <if test="record.pushWay != null">
         push_way = #{record.pushWay,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sender != null">
+        sender = #{record.sender,jdbcType=VARCHAR},
       </if>
       <if test="record.receiver != null">
         receiver = #{record.receiver,jdbcType=VARCHAR},
@@ -231,11 +253,13 @@
     set id = #{record.id,jdbcType=BIGINT},
       gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP},
       gmt_modify = #{record.gmtModify,jdbcType=TIMESTAMP},
+      sourceId = #{record.sourceid,jdbcType=VARCHAR},
       creator = #{record.creator,jdbcType=VARCHAR},
       modifier = #{record.modifier,jdbcType=VARCHAR},
       deleted = #{record.deleted,jdbcType=BIT},
       state = #{record.state,jdbcType=VARCHAR},
       push_way = #{record.pushWay,jdbcType=VARCHAR},
+      sender = #{record.sender,jdbcType=VARCHAR},
       receiver = #{record.receiver,jdbcType=VARCHAR},
       message = #{record.message,jdbcType=VARCHAR}
     <if test="_parameter != null">
@@ -250,6 +274,9 @@
       </if>
       <if test="gmtModify != null">
         gmt_modify = #{gmtModify,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sourceid != null">
+        sourceId = #{sourceid,jdbcType=VARCHAR},
       </if>
       <if test="creator != null">
         creator = #{creator,jdbcType=VARCHAR},
@@ -266,6 +293,9 @@
       <if test="pushWay != null">
         push_way = #{pushWay,jdbcType=VARCHAR},
       </if>
+      <if test="sender != null">
+        sender = #{sender,jdbcType=VARCHAR},
+      </if>
       <if test="receiver != null">
         receiver = #{receiver,jdbcType=VARCHAR},
       </if>
@@ -279,11 +309,13 @@
     update tb_push_message
     set gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
       gmt_modify = #{gmtModify,jdbcType=TIMESTAMP},
+      sourceId = #{sourceid,jdbcType=VARCHAR},
       creator = #{creator,jdbcType=VARCHAR},
       modifier = #{modifier,jdbcType=VARCHAR},
       deleted = #{deleted,jdbcType=BIT},
       state = #{state,jdbcType=VARCHAR},
       push_way = #{pushWay,jdbcType=VARCHAR},
+      sender = #{sender,jdbcType=VARCHAR},
       receiver = #{receiver,jdbcType=VARCHAR},
       message = #{message,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}

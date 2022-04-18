@@ -9,6 +9,8 @@ public class PushMessageDO {
 
     private Date gmtModify;
 
+    private String sourceid;
+
     private String creator;
 
     private String modifier;
@@ -18,6 +20,8 @@ public class PushMessageDO {
     private String state;
 
     private String pushWay;
+
+    private String sender;
 
     private String receiver;
 
@@ -45,6 +49,14 @@ public class PushMessageDO {
 
     public void setGmtModify(Date gmtModify) {
         this.gmtModify = gmtModify;
+    }
+
+    public String getSourceid() {
+        return sourceid;
+    }
+
+    public void setSourceid(String sourceid) {
+        this.sourceid = sourceid;
     }
 
     public String getCreator() {
@@ -85,6 +97,14 @@ public class PushMessageDO {
 
     public void setPushWay(String pushWay) {
         this.pushWay = pushWay;
+    }
+
+    public String getSender() {
+        return sender;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
     }
 
     public String getReceiver() {

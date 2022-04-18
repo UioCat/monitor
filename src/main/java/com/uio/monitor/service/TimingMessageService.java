@@ -141,7 +141,9 @@ public class TimingMessageService {
         timingMessageDTO.setEffective(timingMessageDTO.getEffective());
         return timingMessageDTO;
     }
+
     /**
+     * 自身不保证重复消费，需要上层上锁
      * 推送一条消息
      * @param pushWayEnum
      * @param item
@@ -156,15 +158,33 @@ public class TimingMessageService {
                     serviceName, JSON.toJSONString(item));
             throw new CustomException(BackEnum.DATA_ERROR);
         }
-        pushMessageService.sendMessage(item.getCreator(), item.getReceiver(), pushWayEnum, item.getMessage());
-        // 发送完成更新数据库
-        timingMessageManager.updateMessageState(item.getId(),
-                PushStateEnum.FINISH, PushStateEnum.INIT);
-        // 插入一条新的消息（如果需要）
-        this.insertNextMessageDO(item);
+        String sourceId = pushMessageService.getSourceId(item.getPushWay(), item.getId().toString());
+        Boolean sendResult = pushMessageService.sendMessage(sourceId, item.getCreator(), item.getReceiver(),
+                pushWayEnum, item.getMessage());
+        if (!sendResult) {
+            return false;
+        }
+        Date nextPushTime = this.getNextPushTime(item);
+        if (nextPushTime == null) {
+            // NULL表示不需要下次推送了，将消息更新为FINISH
+            log.info("this message dose not need push next, timingMessage:{}", JSON.toJSONString(item));
+            timingMessageManager.updateMessageStateByOriginState(item.getId(),
+                    PushStateEnum.FINISH, PushStateEnum.INIT);
+        } else {
+            // 发送完消息，更新下次发送消息时间
+            log.info("message need push next time, timingPushMessageId:{}, nextPushTime:{}",
+                    item.getId(), nextPushTime);
+            timingMessageManager.updatePushMessageTime(item.getId(), nextPushTime);
+        }
         return true;
     }
-    private void insertNextMessageDO(TimingMessageDO originTimingMessageDO) {
+
+    /**
+     * 获取下一次推送消息时间
+     * @param originTimingMessageDO
+     * @return
+     */
+    private Date getNextPushTime(TimingMessageDO originTimingMessageDO) {
         String cycleUnit = originTimingMessageDO.getCycleUnit();
         Date pushDateTime = originTimingMessageDO.getPushDateTime();
         Integer pushCycleCount = originTimingMessageDO.getPushCycle();
@@ -173,11 +193,11 @@ public class TimingMessageService {
         if (cycleUnitEnum == null) {
             log.warn("cycleUnitEnum is null, data error while insertNextMessageDO, originTimingMessageDO:{}",
                     JSON.toJSONString(originTimingMessageDO));
-            throw new CustomException(BackEnum.DATA_ERROR);
+            return null;
         }
         if (cycleUnitEnum == CycleUnitEnum.NONE) {
             log.info("this timing message without cycle, ");
-            return;
+            return null;
         }
         Date newDate = null;
         switch (cycleUnitEnum) {
@@ -206,20 +226,6 @@ public class TimingMessageService {
                 break;
             }
         }
-        TimingMessageDO timingMessageDO = new TimingMessageDO();
-        timingMessageDO.setGmtCreate(new Date());
-        timingMessageDO.setGmtModify(new Date());
-        timingMessageDO.setCreator(originTimingMessageDO.getCreator());
-        timingMessageDO.setModifier(originTimingMessageDO.getModifier());
-        timingMessageDO.setDeleted(false);
-        timingMessageDO.setPushDateTime(newDate);
-        timingMessageDO.setState(PushStateEnum.INIT.name());
-        timingMessageDO.setPushWay(originTimingMessageDO.getPushWay());
-        timingMessageDO.setReceiver(originTimingMessageDO.getReceiver());
-        timingMessageDO.setMessage(originTimingMessageDO.getMessage());
-        timingMessageDO.setPushCycle(originTimingMessageDO.getPushCycle());
-        timingMessageDO.setCycleUnit(originTimingMessageDO.getCycleUnit());
-        timingMessageDO.setEffective(originTimingMessageDO.getEffective());
-        timingMessageManager.insertMessage(timingMessageDO);
+        return newDate;
     }
 }

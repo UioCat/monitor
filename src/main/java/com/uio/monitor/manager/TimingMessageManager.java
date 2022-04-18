@@ -39,7 +39,14 @@ public class TimingMessageManager {
         return timingMessageDOMapper.selectByExample(example);
     }
 
-    public int updateMessageState(Long id, PushStateEnum pushStateEnum, PushStateEnum oldPushStateEnum) {
+    /**
+     * 根据原状态修改状态
+     * @param id
+     * @param pushStateEnum
+     * @param oldPushStateEnum
+     * @return
+     */
+    public int updateMessageStateByOriginState(Long id, PushStateEnum pushStateEnum, PushStateEnum oldPushStateEnum) {
         TimingMessageDOExample example = new TimingMessageDOExample();
         TimingMessageDOExample.Criteria criteria = example.createCriteria();
         criteria.andIdEqualTo(id);
@@ -55,6 +62,24 @@ public class TimingMessageManager {
     public void insertMessage(TimingMessageDO messageDO) {
         timingMessageDOMapper.insert(messageDO);
     }
+
+    /**
+     * 更新推送时间
+     * @param id
+     * @param updatePushTime
+     * @return
+     */
+    public int updatePushMessageTime(Long id, Date updatePushTime) {
+        TimingMessageDOExample example = new TimingMessageDOExample();
+        TimingMessageDOExample.Criteria criteria = example.createCriteria();
+        criteria.andIdEqualTo(id);
+        TimingMessageDO timingMessageDO = new TimingMessageDO();
+        timingMessageDO.setGmtModify(new Date());
+        timingMessageDO.setModifier("system");
+        timingMessageDO.setPushDateTime(updatePushTime);
+        return timingMessageDOMapper.updateByExampleSelective(timingMessageDO, example);
+    }
+
     /**
      * 根据 id 删除
      * @param id

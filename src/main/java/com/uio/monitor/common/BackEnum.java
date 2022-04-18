@@ -66,6 +66,8 @@ public enum BackEnum {
     ACCOUNT_EXIST(1005, "账号已存在"),
 
     UNAUTHORIZED_REGISTER(1006, "不允许注册"),
+
+    SEND_MESSAGE_FAILED(1000, "发送消息失败"),
     ;
 
 
