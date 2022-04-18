@@ -52,7 +52,7 @@ public class TimingMessageService {
         timingMessageDO.setModifier(userId.toString());
         timingMessageDO.setPushDateTime(addTimingMessageReq.getPushDateTime());
         timingMessageDO.setPushWay(addTimingMessageReq.getPushWay());
-        timingMessageDO.setState("INIT"); // 先写为 INIT
+        timingMessageDO.setState(PushStateEnum.INIT.name());
         timingMessageDO.setReceiver(addTimingMessageReq.getReceiver());
         timingMessageDO.setMessage(addTimingMessageReq.getMessage());
         timingMessageDO.setPushCycle(addTimingMessageReq.getPushCycle());
@@ -78,14 +78,14 @@ public class TimingMessageService {
         } else {
             // 更新数据
             TimingMessageDO timingMessageDOUpdate = new TimingMessageDO();
-            timingMessageDOUpdate.setId(userId);
+            timingMessageDOUpdate.setId(updateTimingMessageReq.getMessageId());
             timingMessageDOUpdate.setGmtCreate(new Date());
             timingMessageDOUpdate.setGmtModify(new Date());
-            timingMessageDOUpdate.setModifier("system");
+            timingMessageDOUpdate.setModifier(updateTimingMessageReq.getModifier());
             timingMessageDOUpdate.setCreator(userId.toString());
             timingMessageDOUpdate.setDeleted(updateTimingMessageReq.getDeleted());
             timingMessageDOUpdate.setPushDateTime(updateTimingMessageReq.getPushDateTime());
-            timingMessageDOUpdate.setState("INIT");  // 先写成 INIT
+            timingMessageDOUpdate.setState(PushStateEnum.INIT.name());
             timingMessageDOUpdate.setPushWay(updateTimingMessageReq.getPushWay());
             timingMessageDOUpdate.setReceiver(timingMessageDOUpdate.getReceiver());
             timingMessageDOUpdate.setMessage(updateTimingMessageReq.getMessage());
@@ -132,7 +132,7 @@ public class TimingMessageService {
         TimingMessageDTO timingMessageDTO = new TimingMessageDTO();
         timingMessageDTO.setTimingMessageId(timingMessageDTO.getTimingMessageId());
         timingMessageDTO.setPushDateTime(timingMessageDTO.getPushDateTime());
-        timingMessageDTO.setState("INIT");
+        timingMessageDTO.setState(PushStateEnum.INIT.name());
         timingMessageDTO.setPushWay(timingMessageDTO.getPushWay());
         timingMessageDTO.setReceiver(timingMessageDTO.getReceiver());
         timingMessageDTO.setMessage(timingMessageDTO.getMessage());

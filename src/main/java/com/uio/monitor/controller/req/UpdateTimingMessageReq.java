@@ -15,4 +15,10 @@ public class UpdateTimingMessageReq extends AddTimingMessageReq {
      * 是否需要删除，TRUE是直接删除改定时消息
      */
     private Boolean deleted;
+    /**
+     * 消息更新者
+     */
+    private String Modifier;
+
+    private Long MessageId;
 }

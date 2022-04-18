@@ -18,8 +18,6 @@ public class MonitorTimerTest {
 
     @Autowired
     private MonitorTimer monitorTimer;
-    @Autowired
-    //private PushCardTimer pushCardTimer;
 
     /**
      * 服务器监控程序单测
@@ -33,6 +31,6 @@ public class MonitorTimerTest {
     @Test
     public void restartTomcatTest() {
 //        Vector<String> execute = SSHCommandUtils.execute("192.168.31.102", "root", "waiwai", "/usr/java/apache-tomcat-9.0.33/bin/startup.sh");
-       // pushCardTimer.pushCard();
+
     }
 }
