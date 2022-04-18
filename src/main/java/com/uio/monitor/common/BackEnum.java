@@ -68,6 +68,9 @@ public enum BackEnum {
     UNAUTHORIZED_REGISTER(1006, "不允许注册"),
 
     SEND_MESSAGE_FAILED(1000, "发送消息失败"),
+
+    AUTHORITY_ERROR(1001, "没有权限"),
+
     ;
 
 

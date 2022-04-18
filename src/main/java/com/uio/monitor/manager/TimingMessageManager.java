@@ -40,6 +40,10 @@ public class TimingMessageManager {
         return timingMessageDOMapper.selectByExample(example);
     }
 
+    public TimingMessageDO queryById(Long timingMessageId) {
+        return timingMessageDOMapper.selectByPrimaryKey(timingMessageId);
+    }
+
     public List<TimingMessageDO> queryUserTimingMessage(Long userId, Integer pageNum, Integer pageSize,
                                                         PushStateEnum pushStateEnum, PushWayEnum pushWayEnum,
                                                         Boolean effective) {
@@ -136,11 +140,11 @@ public class TimingMessageManager {
 
     /**
      * 根据 id 删除
-     * @param id
+     * @param messageId
      */
-    public void deleteById(Long id){
+    public void deleteById(Long messageId){
         TimingMessageDO timingMessageDO = new TimingMessageDO();
-        timingMessageDO.setId(id);
+        timingMessageDO.setId(messageId);
         timingMessageDO.setGmtModify(new Date());
         timingMessageDO.setDeleted(true);
         timingMessageDOMapper.updateByPrimaryKeySelective(timingMessageDO);

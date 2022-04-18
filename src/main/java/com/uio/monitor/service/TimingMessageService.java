@@ -66,13 +66,25 @@ public class TimingMessageService {
      * @return
      */
     public Boolean updateTimingMessage(Long userId, UpdateTimingMessageReq updateTimingMessageReq) {
+        Long timingMessageId = updateTimingMessageReq.getTimingMessageId();
+        TimingMessageDO timingMessageDO = timingMessageManager.queryById(timingMessageId);
+
+        if (timingMessageDO == null || timingMessageDO.getCreator() == null) {
+            return false;
+        }
+        if (!timingMessageDO.getCreator().equals(userId.toString())) {
+            log.warn("can not delete other timing message, timingMessageId:{}, userId:{}",
+                    timingMessageId, userId);
+            throw new CustomException(BackEnum.AUTHORITY_ERROR);
+        }
+
         if (Boolean.TRUE.equals(updateTimingMessageReq.getDeleted())) {
             // 删除数据
-            timingMessageManager.deleteById(userId);
+            timingMessageManager.deleteById(timingMessageId);
         } else {
             // 更新数据
             TimingMessageDO timingMessageDOUpdate = new TimingMessageDO();
-            timingMessageDOUpdate.setId(updateTimingMessageReq.getTimingMessageId());
+            timingMessageDOUpdate.setId(timingMessageId);
             timingMessageDOUpdate.setModifier(userId.toString());
             timingMessageDOUpdate.setPushDateTime(updateTimingMessageReq.getPushDateTime());
             timingMessageDOUpdate.setPushWay(updateTimingMessageReq.getPushWay());
@@ -152,6 +164,7 @@ public class TimingMessageService {
             throw new CustomException(BackEnum.DATA_ERROR);
         }
         String sourceId = pushMessageService.getSourceId(item.getPushWay(), item.getId().toString());
+        // 发送消息
         Boolean sendResult = pushMessageService.sendMessage(sourceId, item.getCreator(), item.getReceiver(),
                 pushWayEnum, item.getMessage());
         if (!sendResult) {
