@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -148,41 +149,47 @@ public class TimingMessageService {
     }
 
     /**
-     * 自身不保证重复消费，需要上层上锁
      * 推送一条消息
      * @param pushWayEnum
      * @param item
      * @return
      */
-    @Transactional
-    public Boolean sendMessage(PushWayEnum pushWayEnum, TimingMessageDO item) {
+    public void sendMessage(PushWayEnum pushWayEnum, TimingMessageDO item) {
         String serviceName = pushWayEnum.getServiceName();
         PushMessageService pushMessageService = pushMessageServiceMap.get(serviceName);
         if (pushMessageService == null) {
-            log.warn("cannot find pushMessageService, serviceName:{}, timingMessageDO:{}",
+            log.error("cannot find pushMessageService, serviceName:{}, timingMessageDO:{}",
                     serviceName, JSON.toJSONString(item));
-            throw new CustomException(BackEnum.DATA_ERROR);
+            return;
+        }
+        // 数据库来保证不重新消费
+        int count = timingMessageManager.updateMessageStateByOriginState(Arrays.asList(item.getId()),
+                PushStateEnum.PROCESSING.name(), PushStateEnum.INIT.name());
+        if (count != 1) {
+            // 更新失败，表示其他机器在已经在进行发送了
+            return;
         }
         String sourceId = pushMessageService.getSourceId(item.getPushWay(), item.getId().toString());
         // 发送消息
         Boolean sendResult = pushMessageService.sendMessage(sourceId, item.getCreator(), item.getReceiver(),
                 pushWayEnum, item.getMessage());
         if (!sendResult) {
-            return false;
+            log.warn("pushMessageService.sendMessage failed, serviceName:{}, sourceId:{}, item:{}",
+                    serviceName, sourceId, JSON.toJSONString(item));
+            return;
         }
         Date nextPushTime = this.getNextPushTime(item);
         if (nextPushTime == null) {
             // NULL表示不需要下次推送了，将消息更新为FINISH
             log.info("this message dose not need push next, timingMessage:{}", JSON.toJSONString(item));
-            timingMessageManager.updateMessageStateByOriginState(item.getId(),
-                    PushStateEnum.FINISH.name(), item.getState());
+            timingMessageManager.updateMessageStateByOriginState(Arrays.asList(item.getId()),
+                    PushStateEnum.FINISH.name(), PushStateEnum.PROCESSING.name());
         } else {
             // 发送完消息，更新下次发送消息时间
             log.info("message need push next time, timingPushMessageId:{}, nextPushTime:{}",
                     item.getId(), nextPushTime);
-            timingMessageManager.updatePushMessageTime(item.getId(), nextPushTime);
+            timingMessageManager.updatePushMessageTimeAndState(item.getId(), nextPushTime);
         }
-        return true;
     }
 
     /**

@@ -17,6 +17,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author han xun
@@ -35,18 +36,19 @@ public class TimingMessageScanner {
     @Autowired
     private TimingMessageService timingMessageService;
 
-    private final static Long TIMING_MESSAGE_LOCK_TIME = 2 * 60 * 1000L;
+    /**
+     * 5分钟锁
+     */
+    private final static Long TIMING_MESSAGE_LOCK_TIME = 5 * 1000L;
     /**
      * 扫描消息
      * 10s扫描
      */
     @Scheduled(cron = "*/10 * * * * ?")
     public void scannerMessage() {
+        // 发送待发送的消息
         List<TimingMessageDO> timingMessageDOList = timingMessageManager.queryReadyMessage();
-        if (CollectionUtils.isEmpty(timingMessageDOList)) {
-            log.info("no timing message ready");
-        }
-        timingMessageDOList.forEach(item -> {
+        Optional.ofNullable(timingMessageDOList).orElse(Collections.emptyList()).forEach(item -> {
             Long id = item.getId();
             String lockName = RedisConstant.getTimingMessageLock(id.toString());
             String uuid = UUID.randomUUID().toString();
@@ -57,7 +59,7 @@ public class TimingMessageScanner {
                     PushWayEnum pushWayEnum = PushWayEnum.getByName(pushWay);
                     if (pushWayEnum == null) {
                         log.warn("pushWayEnum is null, timingMessageDO:{}", JSON.toJSONString(item));
-                        throw new CustomException(BackEnum.DATA_ERROR);
+                        return;
                     }
                     timingMessageService.sendMessage(pushWayEnum, item);
                 }
@@ -65,6 +67,16 @@ public class TimingMessageScanner {
                 cacheService.unLock(lockName, uuid);
             }
         });
+
+        List<TimingMessageDO> timingMessageDOS = timingMessageManager.queryAbnormalMessage();
+        if (!CollectionUtils.isEmpty(timingMessageDOS)) {
+            List<Long> abnormalMessageIdList = timingMessageDOS.stream().map(TimingMessageDO::getId)
+                    .collect(Collectors.toList());
+            log.info("abnormalMessageIdList:{}", JSON.toJSONString(abnormalMessageIdList));
+            timingMessageManager.updateMessageStateByOriginState(abnormalMessageIdList, PushStateEnum.INIT.name(),
+                    PushStateEnum.PROCESSING.name());
+        }
+
     }
 
 }

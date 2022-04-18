@@ -9,6 +9,7 @@ import com.uio.monitor.entity.TimingMessageDOExample;
 import com.uio.monitor.mapper.TimingMessageDOMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
@@ -28,16 +29,30 @@ public class TimingMessageManager {
     private TimingMessageDOMapper timingMessageDOMapper;
 
     /**
+     * 发送超过X分钟的都算异常消息，直接扫描重发
+     */
+    private static final Long SCAN_ABNORMAL_MESSAGE_TIME = 5 * 60 * 1000L;
+
+    /**
      * 查询待发送的消息
      * @return
      */
     public List<TimingMessageDO> queryReadyMessage() {
         TimingMessageDOExample example = new TimingMessageDOExample();
         TimingMessageDOExample.Criteria criteria = example.createCriteria();
-        criteria.andStateIn(Arrays.asList(PushStateEnum.INIT.name(), PushStateEnum.PROCESSING.name()));
+        criteria.andStateEqualTo(PushStateEnum.INIT.name());
         criteria.andPushDateTimeLessThanOrEqualTo(new Date());
         criteria.andEffectiveEqualTo(true);
         criteria.andDeletedEqualTo(false);
+        return timingMessageDOMapper.selectByExample(example);
+    }
+
+    public List<TimingMessageDO> queryAbnormalMessage() {
+        TimingMessageDOExample example = new TimingMessageDOExample();
+        TimingMessageDOExample.Criteria criteria = example.createCriteria();
+        criteria.andStateEqualTo(PushStateEnum.PROCESSING.name());
+        criteria.andDeletedEqualTo(false);
+        criteria.andPushDateTimeLessThanOrEqualTo(new Date(System.currentTimeMillis() - SCAN_ABNORMAL_MESSAGE_TIME));
         return timingMessageDOMapper.selectByExample(example);
     }
 
@@ -92,15 +107,18 @@ public class TimingMessageManager {
 
     /**
      * 根据原状态修改状态
-     * @param id
+     * @param idList
      * @param pushState
      * @param oldPushState
      * @return
      */
-    public int updateMessageStateByOriginState(Long id, String pushState, String oldPushState) {
+    public int updateMessageStateByOriginState(List<Long> idList, String pushState, String oldPushState) {
+        if (CollectionUtils.isEmpty(idList)) {
+            return 0;
+        }
         TimingMessageDOExample example = new TimingMessageDOExample();
         TimingMessageDOExample.Criteria criteria = example.createCriteria();
-        criteria.andIdEqualTo(id);
+        criteria.andIdIn(idList);
         criteria.andStateEqualTo(oldPushState);
         TimingMessageDO timingMessageDO = new TimingMessageDO();
         timingMessageDO.setGmtModify(new Date());
@@ -123,7 +141,7 @@ public class TimingMessageManager {
      * @param updatePushTime
      * @return
      */
-    public int updatePushMessageTime(Long id, Date updatePushTime) {
+    public int updatePushMessageTimeAndState(Long id, Date updatePushTime) {
         TimingMessageDOExample example = new TimingMessageDOExample();
         TimingMessageDOExample.Criteria criteria = example.createCriteria();
         criteria.andIdEqualTo(id);
@@ -131,7 +149,7 @@ public class TimingMessageManager {
         timingMessageDO.setGmtModify(new Date());
         timingMessageDO.setModifier("system");
         timingMessageDO.setPushDateTime(updatePushTime);
-        timingMessageDO.setState(PushStateEnum.PROCESSING.name());
+        timingMessageDO.setState(PushStateEnum.INIT.name());
         return timingMessageDOMapper.updateByExampleSelective(timingMessageDO, example);
     }
 

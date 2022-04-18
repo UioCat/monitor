@@ -58,11 +58,11 @@ public final class CacheService {
      * @param key        Redis 锁的 key 值
      * @param requestId  请求id，防止解了不该由自己解的锁 (随机生成)
      * @param expireTime 锁的超时时间(毫秒)
-     * @param retryTimes 获取锁的重试次数
+     * @param retryTimes 重试次数
      * @return true or false
      */
     public boolean lock(String key, String requestId, String expireTime, int retryTimes) {
-        if (retryTimes <= 0) { retryTimes = 1; }
+        if (retryTimes < 0) { retryTimes = 0; }
 
         try {
             int count = 0;
@@ -74,16 +74,14 @@ public final class CacheService {
                 if (EXEC_RESULT.equals(result)) {
                     return true;
                 } else {
-                    count++;
                     if (retryTimes == count) {
-                        log.warn("has tried {} times , failed to acquire lock for key:{},requestId:{}", count, key,
+                        log.warn("has tried {} times, failed to acquire lock for key:{}, requestId:{}", count, key,
                             requestId);
                         return false;
-                    } else {
-                        log.warn("try to acquire lock {} times for key:{},requestId:{}", count, key, requestId);
-                        Thread.sleep(100);
-                        continue;
                     }
+                    count++;
+                    log.warn("try to acquire lock {} times for key:{}, requestId:{}", count, key, requestId);
+                    Thread.sleep(100);
                 }
             }
         } catch (InterruptedException e) {

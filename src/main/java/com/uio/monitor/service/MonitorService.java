@@ -56,7 +56,7 @@ public class MonitorService {
             //获取redis同步锁
             requestId = UUID.randomUUID().toString();
             boolean lock = cacheService.lock(lockName, requestId,
-                    String.valueOf(RESTART_LOCK_TIME), 1);
+                    String.valueOf(RESTART_LOCK_TIME), 0);
             if (lock) {
                 log.info("get lock success, lockName:{}, requestId:{}", lockName, requestId);
                 // 重启tomcat服务

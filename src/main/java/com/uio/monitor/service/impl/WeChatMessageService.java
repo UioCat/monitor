@@ -2,8 +2,6 @@ package com.uio.monitor.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.uio.monitor.common.BackEnum;
-import com.uio.monitor.common.CustomException;
 import com.uio.monitor.common.PushStateEnum;
 import com.uio.monitor.common.PushWayEnum;
 import com.uio.monitor.entity.PushMessageDO;
@@ -11,7 +9,6 @@ import com.uio.monitor.utils.URLConnection;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
@@ -47,19 +44,7 @@ public class WeChatMessageService extends AbstractMessageService {
         jsonParam.put("toSend", receiver);
         jsonParam.put("message", message);
         jsonParam.put("verifyCode", verifyCode);
-
-        PushMessageDO pushMessageDO = new PushMessageDO();
-        pushMessageDO.setGmtCreate(new Date());
-        pushMessageDO.setGmtModify(new Date());
-        pushMessageDO.setCreator(sender);
-        pushMessageDO.setModifier(sender);
-        pushMessageDO.setDeleted(false);
-        pushMessageDO.setState(PushStateEnum.FINISH.name());
-        pushMessageDO.setPushWay(PushWayEnum.WECHAT.name());
-        pushMessageDO.setSender(sender);
-        pushMessageDO.setReceiver(receiver);
-        pushMessageDO.setMessage(message);
-        pushMessageDO.setSourceid(sourceId);
+        PushMessageDO pushMessageDO = this.convertPushMessageDO(sender, sourceId, receiver, message);
         String response = null;
         if (!StringUtils.isEmpty(WECHAT_PUSH_MESSAGE_URL)) {
             response = URLConnection.doPost(WECHAT_PUSH_MESSAGE_URL, jsonParam.toString());
@@ -89,5 +74,21 @@ public class WeChatMessageService extends AbstractMessageService {
         log.warn("send message fail, receiver:{}, message:{}, jsonParam:{}, response:{} url:{}",
                 receiver, message, jsonParam, response, WECHAT_PUSH_MESSAGE_URL);
         return false;
+    }
+
+    private PushMessageDO convertPushMessageDO(String sender, String sourceId, String receiver, String message) {
+        PushMessageDO pushMessageDO = new PushMessageDO();
+        pushMessageDO.setGmtCreate(new Date());
+        pushMessageDO.setGmtModify(new Date());
+        pushMessageDO.setCreator(sender);
+        pushMessageDO.setModifier(sender);
+        pushMessageDO.setDeleted(false);
+        pushMessageDO.setState(PushStateEnum.FINISH.name());
+        pushMessageDO.setPushWay(PushWayEnum.WECHAT.name());
+        pushMessageDO.setSender(sender);
+        pushMessageDO.setReceiver(receiver);
+        pushMessageDO.setMessage(message);
+        pushMessageDO.setSourceid(sourceId);
+        return pushMessageDO;
     }
 }

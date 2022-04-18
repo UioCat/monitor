@@ -71,7 +71,6 @@ public class TimingMessageTest {
         timingMessageDO.setCycleUnit(CycleUnitEnum.NONE.name());
         timingMessageDO.setEffective(true);
 
-        Boolean flag = timingMessageService.sendMessage(PushWayEnum.WECHAT, timingMessageDO);
-        log.info("timingMessageService.sendMessage result:{}", flag);
+        timingMessageService.sendMessage(PushWayEnum.WECHAT, timingMessageDO);
     }
 }
