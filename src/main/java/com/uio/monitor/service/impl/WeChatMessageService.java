@@ -30,8 +30,10 @@ public class WeChatMessageService extends AbstractMessageService {
     private final static String WECHAT_MESSAGE = "message";
     private final static String VERIFY_CODE = "verifyCode";
 
-    @Value("${push-message.wechat-url:}")
+    @Value("${pushMessage.wechatUrl:}")
     private String WECHAT_PUSH_MESSAGE_URL;
+    @Value("${pushMessage.wechatSecretKey:}")
+    private String verifyCode;
 
     @Override
     public Boolean sendMessage(String sourceId, String sender, String receiver, PushWayEnum pushWayEnum, String message) {
@@ -41,12 +43,9 @@ public class WeChatMessageService extends AbstractMessageService {
             return false;
         }
 
-        JSONObject jsonObject = JSON.parseObject(message);
-        String sendMessage = Optional.ofNullable(jsonObject.get(WECHAT_MESSAGE)).orElse("").toString();
-        String verifyCode = Optional.ofNullable(jsonObject.get(VERIFY_CODE)).orElse("").toString();
         JSONObject jsonParam = new JSONObject();
         jsonParam.put("toSend", receiver);
-        jsonParam.put("message", sendMessage);
+        jsonParam.put("message", message);
         jsonParam.put("verifyCode", verifyCode);
 
         PushMessageDO pushMessageDO = new PushMessageDO();
@@ -59,7 +58,7 @@ public class WeChatMessageService extends AbstractMessageService {
         pushMessageDO.setPushWay(PushWayEnum.WECHAT.name());
         pushMessageDO.setSender(sender);
         pushMessageDO.setReceiver(receiver);
-        pushMessageDO.setMessage(sendMessage);
+        pushMessageDO.setMessage(message);
         pushMessageDO.setSourceid(sourceId);
         String response = null;
         if (!StringUtils.isEmpty(WECHAT_PUSH_MESSAGE_URL)) {
@@ -83,7 +82,6 @@ public class WeChatMessageService extends AbstractMessageService {
         } else {
             log.warn("WECHAT_PUSH_MESSAGE_URL is empty:{}, send message param:{}",
                     WECHAT_PUSH_MESSAGE_URL, jsonParam.toString());
-            super.insertPushMessageData(pushMessageDO);
         }
         // 发送不成功的所有情况，都插入FAILED
         pushMessageDO.setState(PushStateEnum.FAILED.name());

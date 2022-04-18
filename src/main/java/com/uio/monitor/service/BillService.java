@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class BillService {
 
-
     private static final String TOTAL_AMOUNT_CATEGORY = "总金额";
     private static final String LARGE_ITEM = "大件消费总额";
     private static final String AVE_MONTH_LARGE_ITEM = "大件消费月均";

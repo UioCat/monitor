@@ -44,7 +44,7 @@ public class TimingMessageScanner {
     public void scannerMessage() {
         List<TimingMessageDO> timingMessageDOList = timingMessageManager.queryReadyMessage();
         if (CollectionUtils.isEmpty(timingMessageDOList)) {
-            log.warn("no timing message ready");
+            log.info("no timing message ready");
         }
         timingMessageDOList.forEach(item -> {
             Long id = item.getId();
