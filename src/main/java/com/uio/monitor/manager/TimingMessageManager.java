@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -33,7 +34,7 @@ public class TimingMessageManager {
     public List<TimingMessageDO> queryReadyMessage() {
         TimingMessageDOExample example = new TimingMessageDOExample();
         TimingMessageDOExample.Criteria criteria = example.createCriteria();
-        criteria.andStateEqualTo(PushStateEnum.INIT.name());
+        criteria.andStateIn(Arrays.asList(PushStateEnum.INIT.name(), PushStateEnum.PROCESSING.name()));
         criteria.andPushDateTimeLessThanOrEqualTo(new Date());
         criteria.andEffectiveEqualTo(true);
         criteria.andDeletedEqualTo(false);
@@ -92,19 +93,19 @@ public class TimingMessageManager {
     /**
      * 根据原状态修改状态
      * @param id
-     * @param pushStateEnum
-     * @param oldPushStateEnum
+     * @param pushState
+     * @param oldPushState
      * @return
      */
-    public int updateMessageStateByOriginState(Long id, PushStateEnum pushStateEnum, PushStateEnum oldPushStateEnum) {
+    public int updateMessageStateByOriginState(Long id, String pushState, String oldPushState) {
         TimingMessageDOExample example = new TimingMessageDOExample();
         TimingMessageDOExample.Criteria criteria = example.createCriteria();
         criteria.andIdEqualTo(id);
-        criteria.andStateEqualTo(oldPushStateEnum.name());
+        criteria.andStateEqualTo(oldPushState);
         TimingMessageDO timingMessageDO = new TimingMessageDO();
         timingMessageDO.setGmtModify(new Date());
         timingMessageDO.setModifier("system");
-        timingMessageDO.setState(pushStateEnum.name());
+        timingMessageDO.setState(pushState);
 
         return timingMessageDOMapper.updateByExampleSelective(timingMessageDO, example);
     }
@@ -130,6 +131,7 @@ public class TimingMessageManager {
         timingMessageDO.setGmtModify(new Date());
         timingMessageDO.setModifier("system");
         timingMessageDO.setPushDateTime(updatePushTime);
+        timingMessageDO.setState(PushStateEnum.PROCESSING.name());
         return timingMessageDOMapper.updateByExampleSelective(timingMessageDO, example);
     }
 

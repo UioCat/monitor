@@ -175,7 +175,7 @@ public class TimingMessageService {
             // NULL表示不需要下次推送了，将消息更新为FINISH
             log.info("this message dose not need push next, timingMessage:{}", JSON.toJSONString(item));
             timingMessageManager.updateMessageStateByOriginState(item.getId(),
-                    PushStateEnum.FINISH, PushStateEnum.INIT);
+                    PushStateEnum.FINISH.name(), item.getState());
         } else {
             // 发送完消息，更新下次发送消息时间
             log.info("message need push next time, timingPushMessageId:{}, nextPushTime:{}",
