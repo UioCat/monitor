@@ -163,10 +163,11 @@ public class TimingMessageService {
             return;
         }
         // 数据库来保证不重新消费
-        int count = timingMessageManager.updateMessageStateByOriginState(Arrays.asList(item.getId()),
-                PushStateEnum.PROCESSING.name(), PushStateEnum.INIT.name());
+        int count = timingMessageManager.updateMessageStateByOriginStateAndPushDate(item.getId(),
+                PushStateEnum.PROCESSING.name(), PushStateEnum.INIT.name(), item.getPushDateTime());
         if (count != 1) {
             // 更新失败，表示其他机器在已经在进行发送了
+            log.warn("timingMessageManager.updateMessageStateByOriginState failed, id:{}", item.getId());
             return;
         }
         String sourceId = pushMessageService.getSourceId(item.getPushWay(), item.getId().toString());

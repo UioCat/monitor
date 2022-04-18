@@ -85,7 +85,7 @@ public class TimingMessageManager {
         return timingMessageDOMapper.selectByExample(example);
     }
 
-    public Long countById (Long userId, PushStateEnum pushStateEnum, PushWayEnum pushWayEnum, Boolean effective){
+    public Long countById(Long userId, PushStateEnum pushStateEnum, PushWayEnum pushWayEnum, Boolean effective){
         if (userId == null) {
             return 0L;
         }
@@ -103,6 +103,31 @@ public class TimingMessageManager {
             criteria.andStateEqualTo(pushStateEnum.name());
         }
         return timingMessageDOMapper.countByExample(example);
+    }
+
+    /**
+     * 根据原状态和推送时间修改状态
+     * @param id
+     * @param pushState
+     * @param oldPushState
+     * @return
+     */
+    public int updateMessageStateByOriginStateAndPushDate(Long id, String pushState, String oldPushState,
+                                                          Date pushDateTime) {
+        if (id == null) {
+            return 0;
+        }
+        TimingMessageDOExample example = new TimingMessageDOExample();
+        TimingMessageDOExample.Criteria criteria = example.createCriteria();
+        criteria.andIdEqualTo(id);
+        criteria.andStateEqualTo(oldPushState);
+        criteria.andPushDateTimeEqualTo(pushDateTime);
+        TimingMessageDO timingMessageDO = new TimingMessageDO();
+        timingMessageDO.setGmtModify(new Date());
+        timingMessageDO.setModifier("system");
+        timingMessageDO.setState(pushState);
+
+        return timingMessageDOMapper.updateByExampleSelective(timingMessageDO, example);
     }
 
     /**
