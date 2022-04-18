@@ -12,13 +12,14 @@ import java.util.Date;
 @Data
 public class TimingMessageDTO {
 
+    /**
+     * 定时消息ID
+     */
     private Long timingMessageId;
-
     /**
      * 消息推送时间
      */
     private Date pushDateTime;
-
     /**
      * 消息推送状态
      */
@@ -27,7 +28,9 @@ public class TimingMessageDTO {
      * 消息推送途径
      */
     private String pushWay;
-
+    /**
+     * 接受人
+     */
     private String receiver;
     /**
      * 消息体

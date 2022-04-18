@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -34,8 +33,6 @@ public class TimingMessageService {
 
     @Autowired
     private TimingMessageManager timingMessageManager;
-    @Autowired
-    TimingMessageDOMapper timingMessageDOMapper;
     @Autowired
     private Map<String, PushMessageService> pushMessageServiceMap;
 
@@ -59,10 +56,7 @@ public class TimingMessageService {
         timingMessageDO.setCycleUnit(addTimingMessageReq.getCycleUnit());
         timingMessageDO.setPushWay(addTimingMessageReq.getPushWay());
         timingMessageDO.setEffective(addTimingMessageReq.getEffective());
-        timingMessageDO.setGmtCreate(new Date());
-        timingMessageDO.setGmtModify(new Date());
-        timingMessageDO.setDeleted(false);
-        timingMessageDOMapper.insert(timingMessageDO);
+        timingMessageManager.insertMessage(timingMessageDO);
         return true;
     }
     /**
@@ -78,20 +72,16 @@ public class TimingMessageService {
         } else {
             // 更新数据
             TimingMessageDO timingMessageDOUpdate = new TimingMessageDO();
-            timingMessageDOUpdate.setId(updateTimingMessageReq.getMessageId());
-            timingMessageDOUpdate.setGmtCreate(new Date());
-            timingMessageDOUpdate.setGmtModify(new Date());
-            timingMessageDOUpdate.setModifier(updateTimingMessageReq.getModifier());
-            timingMessageDOUpdate.setCreator(userId.toString());
-            timingMessageDOUpdate.setDeleted(updateTimingMessageReq.getDeleted());
+            timingMessageDOUpdate.setId(updateTimingMessageReq.getTimingMessageId());
+            timingMessageDOUpdate.setModifier(userId.toString());
             timingMessageDOUpdate.setPushDateTime(updateTimingMessageReq.getPushDateTime());
-            timingMessageDOUpdate.setState(PushStateEnum.INIT.name());
             timingMessageDOUpdate.setPushWay(updateTimingMessageReq.getPushWay());
-            timingMessageDOUpdate.setReceiver(timingMessageDOUpdate.getReceiver());
+            timingMessageDOUpdate.setReceiver(updateTimingMessageReq.getReceiver());
             timingMessageDOUpdate.setMessage(updateTimingMessageReq.getMessage());
             timingMessageDOUpdate.setPushCycle(updateTimingMessageReq.getPushCycle());
             timingMessageDOUpdate.setCycleUnit(updateTimingMessageReq.getCycleUnit());
             timingMessageDOUpdate.setEffective(updateTimingMessageReq.getEffective());
+            timingMessageManager.updateById(timingMessageDOUpdate);
         }
         return true;
     }
@@ -101,23 +91,26 @@ public class TimingMessageService {
      * @param userId
      * @param pageNum
      * @param pageSize
-     * @param pushStateEnum
      * @param pushWayEnum
      * @param effective
      * @return
      */
-    public PageInfo<TimingMessageDTO> getTimingMessageList(Long userId, Integer pageNum, Integer pageSize, PushStateEnum pushStateEnum, PushWayEnum pushWayEnum, Boolean effective){
+    public PageInfo<TimingMessageDTO> getTimingMessageList(Long userId, Integer pageNum, Integer pageSize,
+                                                           PushStateEnum pushStateEnum, PushWayEnum pushWayEnum,
+                                                           Boolean effective){
         PageInfo<TimingMessageDTO> res = new PageInfo<>();
         res.setPageNum(pageNum);
         res.setPageSize(pageSize);
         res.setTotal(0);
 
-        List<TimingMessageDO> timingMessageDOList = timingMessageManager.queryReadyMessage();
+        List<TimingMessageDO> timingMessageDOList = timingMessageManager.queryUserTimingMessage(userId, pageSize,
+                pageNum, pushStateEnum, pushWayEnum, effective);
         if (CollectionUtils.isEmpty(timingMessageDOList)){
             return res;
         }
-        List<TimingMessageDTO> timingMessageDTOS = timingMessageDOList.stream().map(this::convertTimingMessageDTO).collect(Collectors.toList());
-        Long count = timingMessageManager.countById(userId, pageNum, pageSize, pushStateEnum, pushWayEnum, effective);
+        List<TimingMessageDTO> timingMessageDTOS = timingMessageDOList.stream().map(this::convertTimingMessageDTO)
+                .collect(Collectors.toList());
+        Long count = timingMessageManager.countById(userId, pushStateEnum, pushWayEnum, effective);
         res.setTotal(count);
         res.setList(timingMessageDTOS);
         return res;
@@ -130,15 +123,15 @@ public class TimingMessageService {
      */
     private TimingMessageDTO convertTimingMessageDTO(TimingMessageDO timingMessageDO){
         TimingMessageDTO timingMessageDTO = new TimingMessageDTO();
-        timingMessageDTO.setTimingMessageId(timingMessageDTO.getTimingMessageId());
-        timingMessageDTO.setPushDateTime(timingMessageDTO.getPushDateTime());
-        timingMessageDTO.setState(PushStateEnum.INIT.name());
-        timingMessageDTO.setPushWay(timingMessageDTO.getPushWay());
-        timingMessageDTO.setReceiver(timingMessageDTO.getReceiver());
-        timingMessageDTO.setMessage(timingMessageDTO.getMessage());
-        timingMessageDTO.setPushCycle(timingMessageDTO.getPushCycle());
-        timingMessageDTO.setCycleUnit(timingMessageDTO.getCycleUnit());
-        timingMessageDTO.setEffective(timingMessageDTO.getEffective());
+        timingMessageDTO.setTimingMessageId(timingMessageDO.getId());
+        timingMessageDTO.setPushDateTime(timingMessageDO.getPushDateTime());
+        timingMessageDTO.setState(timingMessageDO.getState());
+        timingMessageDTO.setPushWay(timingMessageDO.getPushWay());
+        timingMessageDTO.setReceiver(timingMessageDO.getReceiver());
+        timingMessageDTO.setMessage(timingMessageDO.getMessage());
+        timingMessageDTO.setPushCycle(timingMessageDO.getPushCycle());
+        timingMessageDTO.setCycleUnit(timingMessageDO.getCycleUnit());
+        timingMessageDTO.setEffective(timingMessageDO.getEffective());
         return timingMessageDTO;
     }
 

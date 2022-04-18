@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -39,6 +40,51 @@ public class TimingMessageManager {
         return timingMessageDOMapper.selectByExample(example);
     }
 
+    public List<TimingMessageDO> queryUserTimingMessage(Long userId, Integer pageNum, Integer pageSize,
+                                                        PushStateEnum pushStateEnum, PushWayEnum pushWayEnum,
+                                                        Boolean effective) {
+        if (userId == null) {
+            return Collections.emptyList();
+        }
+        // 分页查询
+        PageHelper.startPage(pageNum, pageSize);
+
+        TimingMessageDOExample example = new TimingMessageDOExample();
+        TimingMessageDOExample.Criteria criteria = example.createCriteria();
+        criteria.andDeletedEqualTo(false);
+        criteria.andCreatorEqualTo(userId.toString());
+        if (pushWayEnum != null) {
+            criteria.andPushWayEqualTo(pushWayEnum.name());
+        }
+        if (effective != null) {
+            criteria.andEffectiveEqualTo(effective);
+        }
+        if (pushStateEnum != null) {
+            criteria.andStateEqualTo(pushStateEnum.name());
+        }
+        return timingMessageDOMapper.selectByExample(example);
+    }
+
+    public Long countById (Long userId, PushStateEnum pushStateEnum, PushWayEnum pushWayEnum, Boolean effective){
+        if (userId == null) {
+            return 0L;
+        }
+        TimingMessageDOExample example = new TimingMessageDOExample();
+        TimingMessageDOExample.Criteria criteria = example.createCriteria();
+        criteria.andDeletedEqualTo(false);
+        criteria.andCreatorEqualTo(userId.toString());
+        if (pushWayEnum != null) {
+            criteria.andPushWayEqualTo(pushWayEnum.name());
+        }
+        if (effective != null) {
+            criteria.andEffectiveEqualTo(effective);
+        }
+        if (pushStateEnum != null) {
+            criteria.andStateEqualTo(pushStateEnum.name());
+        }
+        return timingMessageDOMapper.countByExample(example);
+    }
+
     /**
      * 根据原状态修改状态
      * @param id
@@ -59,8 +105,11 @@ public class TimingMessageManager {
         return timingMessageDOMapper.updateByExampleSelective(timingMessageDO, example);
     }
 
-    public void insertMessage(TimingMessageDO messageDO) {
-        timingMessageDOMapper.insert(messageDO);
+    public void insertMessage(TimingMessageDO timingMessageDO) {
+        timingMessageDO.setGmtModify(new Date());
+        timingMessageDO.setGmtCreate(new Date());
+        timingMessageDO.setDeleted(false);
+        timingMessageDOMapper.insert(timingMessageDO);
     }
 
     /**
@@ -80,6 +129,11 @@ public class TimingMessageManager {
         return timingMessageDOMapper.updateByExampleSelective(timingMessageDO, example);
     }
 
+    public void updateById(TimingMessageDO timingMessageDO) {
+        timingMessageDO.setGmtModify(new Date());
+        timingMessageDOMapper.updateByPrimaryKeySelective(timingMessageDO);
+    }
+
     /**
      * 根据 id 删除
      * @param id
@@ -91,13 +145,4 @@ public class TimingMessageManager {
         timingMessageDO.setDeleted(true);
         timingMessageDOMapper.updateByPrimaryKeySelective(timingMessageDO);
     }
-
-    public Long countById (Long userId, Integer pageNum, Integer pageSize, PushStateEnum pushStateEnum, PushWayEnum pushWayEnum, Boolean effective){
-        PageHelper.startPage(pageNum, pageSize);
-        TimingMessageDOExample example = new TimingMessageDOExample();
-        TimingMessageDOExample.Criteria criteria = example.createCriteria();
-        criteria.andDeletedEqualTo(false);
-        return timingMessageDOMapper.countByExample(example);
-    }
-
 }

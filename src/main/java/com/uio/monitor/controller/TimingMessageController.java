@@ -1,6 +1,5 @@
 package com.uio.monitor.controller;
 
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageInfo;
 import com.uio.monitor.common.BackMessage;
 import com.uio.monitor.common.PushStateEnum;
@@ -15,7 +14,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 /**
  * @author han xun
@@ -23,6 +21,7 @@ import java.util.List;
  * Description: 定时消息
  */
 @RestController
+@RequestMapping("/message")
 public class TimingMessageController extends BaseController {
 
     @Autowired
@@ -58,11 +57,12 @@ public class TimingMessageController extends BaseController {
      * @return
      */
     @GetMapping("/getTimingMessageList")
-    public BackMessage<PageInfo<TimingMessageDTO>> getTimingMessageList(@RequestParam(value = "pageNum", required = false) Integer pageNum,
-                                                                    @RequestParam(value = "pageSize", required = false) Integer pageSize,
-                                                                    @RequestParam(value = "state", required = false) String state,
-                                                                    @RequestParam(value = "pushWay", required = false) String pushWay,
-                                                                    @RequestParam(value = "effective", required = false) Boolean effective) {
+    public BackMessage<PageInfo<TimingMessageDTO>> getTimingMessageList(
+            @RequestParam(value = "pageNum", required = false) Integer pageNum,
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "state", required = false) String state,
+            @RequestParam(value = "pushWay", required = false) String pushWay,
+            @RequestParam(value = "effective", required = false) Boolean effective) {
         // 入参处理
         pageNum = pageNum == null ? 1 : pageNum;
         pageSize = pageSize == null ? 10 : pageSize;
