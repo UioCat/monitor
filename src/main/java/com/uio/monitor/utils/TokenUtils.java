@@ -8,6 +8,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.uio.monitor.common.BackEnum;
 import com.uio.monitor.common.CustomException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
@@ -22,26 +23,23 @@ import java.util.Map;
 @Slf4j
 public class TokenUtils {
 
+
     /**
      * 设置过期时间
      */
     private static final long EXPIRE_DATE = 24 * 60 * 100000;
     /**
-     * token秘钥
-     */
-    private static final String TOKEN_SECRET = "ZCEQIUBFKSJBFJH2020BQWE";
-    /**
      * 字段名
      */
     private static final String FIELD_NAME = "ID";
 
-    public static String getToken(Long id) {
+    public static String getToken(Long id, String tokenSecret) {
         String token = "";
         try {
             //过期时间
             Date date = new Date(System.currentTimeMillis() + EXPIRE_DATE);
             //秘钥及加密算法
-            Algorithm algorithm = Algorithm.HMAC256(TOKEN_SECRET);
+            Algorithm algorithm = Algorithm.HMAC256(tokenSecret);
             //设置头部信息
             Map<String, Object> header = new HashMap<>();
             header.put("typ", "JWT");
@@ -65,11 +63,11 @@ public class TokenUtils {
      * @param token
      * @return
      */
-    public static Long getIdAndVerify(String token) {
+    public static Long getIdAndVerify(String token, String tokenSecret) {
         if (StringUtils.isEmpty(token)) {
             throw new CustomException(BackEnum.UNAUTHORIZED);
         }
-        Algorithm algorithm = Algorithm.HMAC256(TOKEN_SECRET);
+        Algorithm algorithm = Algorithm.HMAC256(tokenSecret);
         JWTVerifier verifier = JWT.require(algorithm).build();
         DecodedJWT jwt = null;
         try {

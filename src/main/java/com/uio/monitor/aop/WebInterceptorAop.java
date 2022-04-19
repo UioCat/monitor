@@ -10,6 +10,7 @@ import com.uio.monitor.utils.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -37,6 +38,9 @@ import javax.servlet.http.HttpServletRequest;
 public class WebInterceptorAop {
 
     public final static String TOKEN = "token";
+
+    @Value("${token.secret}")
+    private String tokenSecret;
 
     @Pointcut("execution (* com.uio.*.controller.*.*(..))")
     public void pointcut() {
@@ -73,7 +77,7 @@ public class WebInterceptorAop {
             String token = request.getHeader(TOKEN);
             if (token != null) {
                 UserToken userToken = new UserToken();
-                userToken.setId(TokenUtils.getIdAndVerify(token));
+                userToken.setId(TokenUtils.getIdAndVerify(token, tokenSecret));
                 ThreadLocalUtils.addCurrentUser(userToken);
             }
             o = proceedingJoinPoint.proceed();

@@ -14,6 +14,7 @@ import com.uio.monitor.utils.TokenUtils;
 import com.uio.monitor.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -31,6 +32,9 @@ public class UserController extends BaseController {
     @Autowired
     private UserManager userManager;
 
+    @Value("${token.secret}")
+    private String tokenSecret;
+
     @PostMapping("/login")
     public BackMessage<String> login(@RequestBody @Valid LoginReq loginReq) {
         UserDO userDO = userManager.queryByAccount(loginReq.getAccount());
@@ -38,7 +42,7 @@ public class UserController extends BaseController {
             throw new CustomException(BackEnum.NO_USER);
         }
         if (userDO.getPassword().equals(Utils.getMD5Str(loginReq.getPassword()))) {
-            return BackMessage.success(TokenUtils.getToken(userDO.getId()));
+            return BackMessage.success(TokenUtils.getToken(userDO.getId(), tokenSecret));
         }
         throw new CustomException(BackEnum.PWD_ERROR);
     }
