@@ -5,16 +5,14 @@ import com.uio.monitor.common.*;
 import com.uio.monitor.constant.RedisConstant;
 import com.uio.monitor.entity.TimingMessageDO;
 import com.uio.monitor.manager.TimingMessageManager;
-import com.uio.monitor.service.PushMessageService;
 import com.uio.monitor.service.TimingMessageService;
-import com.uio.monitor.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,6 +34,11 @@ public class TimingMessageScanner {
     @Autowired
     private TimingMessageService timingMessageService;
 
+    @Value("${spring.profiles.active}")
+    private String env;
+
+    private final static String ENV = "interior_prod";
+
     /**
      * 5分钟锁
      */
@@ -46,6 +49,9 @@ public class TimingMessageScanner {
      */
     @Scheduled(cron = "*/10 * * * * ?")
     public void scannerMessage() {
+        if (!ENV.equals(env)) {
+            return;
+        }
         // 发送待发送的消息
         List<TimingMessageDO> timingMessageDOList = timingMessageManager.queryReadyMessage();
         Optional.ofNullable(timingMessageDOList).orElse(Collections.emptyList()).forEach(item -> {
@@ -61,7 +67,7 @@ public class TimingMessageScanner {
                         log.warn("pushWayEnum is null, timingMessageDO:{}", JSON.toJSONString(item));
                         return;
                     }
-                    timingMessageService.sendMessage(pushWayEnum, item);
+                    timingMessageService.pushMessage(pushWayEnum, item);
                 }
             } finally {
                 cacheService.unLock(lockName, uuid);

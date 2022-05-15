@@ -122,6 +122,7 @@ public class TimingMessageManager {
         criteria.andIdEqualTo(id);
         criteria.andStateEqualTo(oldPushState);
         criteria.andPushDateTimeEqualTo(pushDateTime);
+
         TimingMessageDO timingMessageDO = new TimingMessageDO();
         timingMessageDO.setGmtModify(new Date());
         timingMessageDO.setModifier("system");

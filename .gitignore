@@ -36,6 +36,7 @@ build/
 *.sh
 application-dev.properties
 application-prod.properties
+application-interior_prod.properties
 
 # 打卡程序相关
 PushCardTimer.java

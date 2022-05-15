@@ -35,6 +35,10 @@ public class ConfigManager {
      */
     private final static String SERVER_LIST_KEY = "server_list_key";
     /**
+     * 本地服务器数据KEY
+     */
+    private final static String LOCAL_SERVER_LIST_KEY = "local_server_list_key";
+    /**
      * 账单配置前缀
      */
     private static final String BILL_CONFIG = "bill_config";
@@ -77,6 +81,22 @@ public class ConfigManager {
         ConfigDOExample example = new ConfigDOExample();
         ConfigDOExample.Criteria criteria = example.createCriteria();
         criteria.andConfigKeyEqualTo(SERVER_LIST_KEY);
+        criteria.andDeletedEqualTo(false);
+        ConfigDO configDO = configDOMapper.selectByExampleWithBLOBs(example).stream().findFirst().orElse(null);
+        if (configDO == null || configDO.getConfigValue() == null) {
+            return new ArrayList<>(0);
+        }
+        return JSON.parseArray(configDO.getConfigValue(), ServerMessage.class);
+    }
+
+    /**
+     * 获取本地服务器信息列表
+     * @return
+     */
+    public List<ServerMessage> getLocalServerList() {
+        ConfigDOExample example = new ConfigDOExample();
+        ConfigDOExample.Criteria criteria = example.createCriteria();
+        criteria.andConfigKeyEqualTo(LOCAL_SERVER_LIST_KEY);
         criteria.andDeletedEqualTo(false);
         ConfigDO configDO = configDOMapper.selectByExampleWithBLOBs(example).stream().findFirst().orElse(null);
         if (configDO == null || configDO.getConfigValue() == null) {

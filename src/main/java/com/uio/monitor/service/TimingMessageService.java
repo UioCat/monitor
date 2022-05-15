@@ -154,7 +154,7 @@ public class TimingMessageService {
      * @param item
      * @return
      */
-    public void sendMessage(PushWayEnum pushWayEnum, TimingMessageDO item) {
+    public void pushMessage(PushWayEnum pushWayEnum, TimingMessageDO item) {
         String serviceName = pushWayEnum.getServiceName();
         PushMessageService pushMessageService = pushMessageServiceMap.get(serviceName);
         if (pushMessageService == null) {

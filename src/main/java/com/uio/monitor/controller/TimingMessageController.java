@@ -27,15 +27,15 @@ public class TimingMessageController extends BaseController {
     @Autowired
     private TimingMessageService timingMessageService;
 
-    /**
-     * 新增一个定时消息
-     * @return
-     */
-    @PostMapping("/addTimingMessage")
-    public BackMessage<Boolean> addTimingMessage(@RequestBody @Valid AddTimingMessageReq addTimingMessageReq) {
-        Boolean res = timingMessageService.addTimingMessage(super.getUserId(), addTimingMessageReq);
-        return BackMessage.success(res);
-    }
+//    /**
+//     * 新增一个定时消息
+//     * @return
+//     */
+//    @PostMapping("/addTimingMessage")
+//    public BackMessage<Boolean> addTimingMessage(@RequestBody @Valid AddTimingMessageReq addTimingMessageReq) {
+//        Boolean res = timingMessageService.addTimingMessage(super.getUserId(), addTimingMessageReq);
+//        return BackMessage.success(res);
+//    }
 
     /**
      * 修改/删除定时任务消息

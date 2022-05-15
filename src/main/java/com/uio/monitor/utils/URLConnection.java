@@ -44,15 +44,12 @@ public class URLConnection {
         os.flush();
         //6, 获取响应的数据
         //得到服务器写回的响应数据
-        BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream(),"utf-8"));
+        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(),"utf-8"));
         String str = br.readLine();
 
         return str;
     }
 
-    public static void main(String[] args) {
-        doPost("http://localhost:8080/sendWeChatMessage", "test for user-Agent");
-    }
 
     /**
      * post请求，json格式

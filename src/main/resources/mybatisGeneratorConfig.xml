@@ -81,6 +81,12 @@
                enableSelectByExample="true"
                enableUpdateByExample="true">
         </table>
+        <table tableName="tb_message_content" domainObjectName="MessageContentDO"
+               enableCountByExample="true"
+               enableDeleteByExample="true"
+               enableSelectByExample="true"
+               enableUpdateByExample="true">
+        </table>
 <!--        <table tableName="tb_bill" domainObjectName="BillDO" enableCountByExample="true" enableDeleteByExample="true"-->
 <!--               enableSelectByExample="true" enableUpdateByExample="true">-->
 <!--        </table>-->

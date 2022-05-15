@@ -9,9 +9,11 @@ import com.uio.monitor.service.EmailService;
 import com.uio.monitor.service.MonitorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -33,9 +35,12 @@ public class MonitorTimer {
     private MonitorService monitorService;
     @Autowired
     private CacheService cacheService;
+    @Value("${spring.profiles.active}")
+    private String env;
 
     private final static String ALARM_RECEIVE = "406453373@qq.com";
     private final static String ALARM_EMAIL_SUBJECT = "服务器异常提醒";
+    private final static String ENV = "interior_prod";
 
     /**
      * 定时监测
@@ -44,6 +49,12 @@ public class MonitorTimer {
     public void monitorTimer() {
         log.info("server health monitor timer launch");
         List<ServerMessage> list = configManager.getServerList();
+        if (ENV.equals(env)) {
+            List<ServerMessage> localServerList = configManager.getLocalServerList();
+            if (!CollectionUtils.isEmpty(localServerList)) {
+                list.addAll(localServerList);
+            }
+        }
         for (ServerMessage serverMessage : list) {
             try {
                 //保持服务器运行
