@@ -23,11 +23,6 @@ public class EmailService {
     @Autowired
     private CacheService cacheService;
 
-    @Value("${email.username:}")
-    private String emailUsername;
-    @Value("${email.password:}")
-    private String emailPassword;
-
     /**
      * 默认重复时间 1h
      */
@@ -46,7 +41,7 @@ public class EmailService {
      * @param to      邮件发送去向
      * @param subject 主题
      * @param text    正文
-     * @param time    不重复发送设置时间
+     * @param time    不重复发送设置时间/秒
      */
     public void sendNonRepeatMessage(String to, String subject, String text, Long time) {
         String md5Str = CommonUtils.md5Utils(to + subject + text);
@@ -70,30 +65,10 @@ public class EmailService {
     public void sendSimpleMessage(
             String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(emailUsername);
+        message.setFrom(MonitorConstant.MY_EMAIL);
         message.setTo(to);
         message.setSubject(subject);
         message.setText(text);
         emailSender.send(message);
-    }
-
-    /**
-     * 配置数据类
-     *
-     * @return
-     */
-    @Bean
-    public JavaMailSender getJavaMailSender() {
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost("smtp.qq.com");
-        mailSender.setPort(587);
-        mailSender.setUsername(emailUsername);
-        mailSender.setPassword(emailPassword);
-        Properties props = mailSender.getJavaMailProperties();
-        props.put("mail.transport.protocol", "smtp");
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.debug", "true");
-        return mailSender;
     }
 }

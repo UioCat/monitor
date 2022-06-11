@@ -17,4 +17,8 @@ public interface MonitorConstant {
      */
     String HEALTH_MONITOR_CRON = "0 0/1 * * * ?";
 
+    /**
+     * 本人邮箱
+     */
+    String MY_EMAIL = "406453373@qq.com";
 }

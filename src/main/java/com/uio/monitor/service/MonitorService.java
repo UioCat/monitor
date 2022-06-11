@@ -2,6 +2,7 @@ package com.uio.monitor.service;
 
 import com.alibaba.fastjson.JSON;
 import com.uio.monitor.common.CacheService;
+import com.uio.monitor.constant.MonitorConstant;
 import com.uio.monitor.constant.RedisConstant;
 import com.uio.monitor.vo.ServerMessage;
 import com.uio.monitor.utils.SSHCommandUtils;
@@ -29,8 +30,6 @@ public class MonitorService {
     @Autowired
     private EmailService emailService;
 
-
-    private final static String RECEIVE_ADDRESS = "406453373@qq.com";
     private final static String EMAIL_SUBJECT_FOR_MONITOR = "服务器健康检测程序";
 
     /**
@@ -134,7 +133,7 @@ public class MonitorService {
                 sendMessage.append("restart server failed");
             }
             sendMessage.append("serverMessage:").append(JSON.toJSONString(serverMessage));
-            emailService.sendNonRepeatMessage(RECEIVE_ADDRESS, EMAIL_SUBJECT_FOR_MONITOR, sendMessage.toString());
+            emailService.sendNonRepeatMessage(MonitorConstant.MY_EMAIL, EMAIL_SUBJECT_FOR_MONITOR, sendMessage.toString());
         }
     }
 
@@ -169,7 +168,7 @@ public class MonitorService {
             log.info("execute start tomcat, serverMessage:{}", JSON.toJSONString(serverMessage));
         } catch (Throwable t) {
             log.info("start tomcat failed, ", t);
-            emailService.sendNonRepeatMessage(RECEIVE_ADDRESS, EMAIL_SUBJECT_FOR_MONITOR,
+            emailService.sendNonRepeatMessage(MonitorConstant.MY_EMAIL, EMAIL_SUBJECT_FOR_MONITOR,
                     "SSH连接执行命令时异常, serverMessage" + JSON.toJSONString(serverMessage) + t);
             return false;
         }
