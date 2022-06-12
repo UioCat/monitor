@@ -35,12 +35,9 @@ public class URLConnection {
         //4, 设置允许写出数据,默认是不允许 false
         conn.setDoOutput(true);
         conn.setDoInput(true);//当前的连接可以从服务器读取内容, 默认是true
-
         //5, 获取向服务器写出数据的流
         OutputStream os = conn.getOutputStream();
-        //参数是键值队  , 不以"?"开始
         os.write(Info.getBytes());
-        //os.write("googleTokenKey=&username=admin&password=5df5c29ae86331e1b5b526ad90d767e4".getBytes());
         os.flush();
         //6, 获取响应的数据
         //得到服务器写回的响应数据
