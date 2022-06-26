@@ -55,9 +55,9 @@ public class HomeController extends BaseController {
     public BackMessage<Void> unlocking(@RequestParam String secretKey) {
         super.verifyKey(secretKey);
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        // 由于苹果快捷指令触发URL会重复触发两次，所以设置1s内幂等
-        emailService.sendNonRepeatMessage("406453373@qq.com", "门锁打开通知",
-                "门锁已经打开，时间：" + df.format(System.currentTimeMillis()), 1L);
+        // 由于苹果快捷指令触发URL会重复触发两次，所以设置30s内幂等
+        emailService.sendQuietMessage("406453373@qq.com", "门锁打开通知",
+                "门锁已经打开，时间：" + df.format(System.currentTimeMillis()), 30L);
         return BackMessage.success();
     }
 }

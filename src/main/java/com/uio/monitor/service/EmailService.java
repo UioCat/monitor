@@ -12,6 +12,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Properties;
 
 @Service
@@ -27,6 +28,11 @@ public class EmailService {
      * 默认重复时间 1h
      */
     private static final Long DEFAULT_REPEAT_TIME = 60 * 60L;
+
+    /**
+     * 发送安静消息redis前缀
+     */
+    private static final String SEND_QUIT_MESSAGE_PREFIX = "send_quit_message";
 
     /**
      * 发送短时间不重复的mail 1小时
@@ -53,6 +59,25 @@ public class EmailService {
             return;
         }
         log.warn("send mail failed, request need non repeat, to:{}, subject:{}, text:{}, time:{}, md5Str:{}", to, subject, text, time, md5Str);
+    }
+
+    /**
+     * 发送消息，一段时间不打扰
+     * @param to
+     * @param subject
+     * @param text
+     * @param time s
+     */
+    public void sendQuietMessage(String to, String subject, String text, Long time) {
+        String redisKey = SEND_QUIT_MESSAGE_PREFIX + "_" + to;
+        if (!cacheService.hasKey(redisKey)) {
+            log.info("send mail success, to:{}, subject:{}, text:{}", to, subject, text);
+            cacheService.put(redisKey, 0, time);
+            sendSimpleMessage(to, subject, text);
+            return;
+        }
+        log.warn("send mail failed, request need non repeat in {}s, to:{}, subject:{}, text:{}, key:{}",
+                time, to, subject, text, redisKey);
     }
 
     /**
