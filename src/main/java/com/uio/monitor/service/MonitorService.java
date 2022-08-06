@@ -86,7 +86,7 @@ public class MonitorService {
             URL url = new URL("http://" + serverMessage.getIp() + ":" + serverMessage.getPort());
             java.net.URLConnection con = url.openConnection();
             in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            con.setConnectTimeout(1000);
+            con.setConnectTimeout(2000);
             con.setReadTimeout(4000);
             while ((s = in.readLine()) != null) {
                 if (s.length() > 0) {
