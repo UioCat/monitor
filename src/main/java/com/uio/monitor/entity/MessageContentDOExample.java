@@ -625,6 +625,76 @@ public class MessageContentDOExample {
             return (Criteria) this;
         }
 
+        public Criteria andSenderIsNull() {
+            addCriterion("sender is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSenderIsNotNull() {
+            addCriterion("sender is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSenderEqualTo(String value) {
+            addCriterion("sender =", value, "sender");
+            return (Criteria) this;
+        }
+
+        public Criteria andSenderNotEqualTo(String value) {
+            addCriterion("sender <>", value, "sender");
+            return (Criteria) this;
+        }
+
+        public Criteria andSenderGreaterThan(String value) {
+            addCriterion("sender >", value, "sender");
+            return (Criteria) this;
+        }
+
+        public Criteria andSenderGreaterThanOrEqualTo(String value) {
+            addCriterion("sender >=", value, "sender");
+            return (Criteria) this;
+        }
+
+        public Criteria andSenderLessThan(String value) {
+            addCriterion("sender <", value, "sender");
+            return (Criteria) this;
+        }
+
+        public Criteria andSenderLessThanOrEqualTo(String value) {
+            addCriterion("sender <=", value, "sender");
+            return (Criteria) this;
+        }
+
+        public Criteria andSenderLike(String value) {
+            addCriterion("sender like", value, "sender");
+            return (Criteria) this;
+        }
+
+        public Criteria andSenderNotLike(String value) {
+            addCriterion("sender not like", value, "sender");
+            return (Criteria) this;
+        }
+
+        public Criteria andSenderIn(List<String> values) {
+            addCriterion("sender in", values, "sender");
+            return (Criteria) this;
+        }
+
+        public Criteria andSenderNotIn(List<String> values) {
+            addCriterion("sender not in", values, "sender");
+            return (Criteria) this;
+        }
+
+        public Criteria andSenderBetween(String value1, String value2) {
+            addCriterion("sender between", value1, value2, "sender");
+            return (Criteria) this;
+        }
+
+        public Criteria andSenderNotBetween(String value1, String value2) {
+            addCriterion("sender not between", value1, value2, "sender");
+            return (Criteria) this;
+        }
+
         public Criteria andProcessStateIsNull() {
             addCriterion("process_state is null");
             return (Criteria) this;

@@ -1,22 +1,18 @@
 package com.uio.monitor.manager;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.uio.monitor.controller.resp.BillConfigDTO;
 import com.uio.monitor.entity.ConfigDO;
 import com.uio.monitor.entity.ConfigDOExample;
 import com.uio.monitor.mapper.ConfigDOMapper;
+import com.uio.monitor.vo.CityAdCodeDTO;
 import com.uio.monitor.vo.ServerMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -42,6 +38,13 @@ public class ConfigManager {
      * 账单配置前缀
      */
     private static final String BILL_CONFIG = "bill_config";
+    /**
+     * Mac屏幕亮度参数
+     */
+    private static final String MAC_SCREEN_BRIGHTNESS = "mac_screen_brightness";
+
+    private static final String HOT_CITY_ADCODE = "hot_city_adcode";
+    private static final String CITY_ADCODE = "city_adcode";
 
     /**
      * 新增一个带监测的服务器数据
@@ -186,5 +189,93 @@ public class ConfigManager {
         } else {
             configDOMapper.updateByPrimaryKeySelective(configDO);
         }
+    }
+
+    /**
+     * 更新屏幕亮度参数
+     */
+    public String queryAndUpdateMacScreenBrightness() {
+        ConfigDOExample example = new ConfigDOExample();
+        ConfigDOExample.Criteria criteria = example.createCriteria();
+        criteria.andConfigKeyEqualTo(MAC_SCREEN_BRIGHTNESS);
+        criteria.andDeletedEqualTo(false);
+        List<ConfigDO> configDOList = configDOMapper.selectByExampleWithBLOBs(example);
+        ConfigDO configDO = new ConfigDO();
+        if (CollectionUtils.isEmpty(configDOList) ) {
+            // 插入
+            configDO.setGmtCreate(new Date());
+            configDO.setGmtModify(new Date());
+            configDO.setCreator("system");
+            configDO.setModifier("system");
+            configDO.setDeleted(false);
+            configDO.setConfigKey(MAC_SCREEN_BRIGHTNESS);
+            configDO.setConfigValue("0");
+            configDOMapper.insert(configDO);
+            return "0";
+        } {
+            ConfigDO configDOInDb = configDOList.get(0);
+            // 更新
+            configDO.setId(configDOInDb.getId());
+            configDO.setGmtModify(new Date());
+            configDO.setModifier("system");
+            configDO.setConfigValue(configDOInDb.getConfigValue().equals("0") ? "1" : "0");
+            configDOMapper.updateByPrimaryKeySelective(configDO);
+            return configDOInDb.getConfigValue();
+        }
+    }
+
+    public List<CityAdCodeDTO> getHotCityCode() {
+        ConfigDOExample example = new ConfigDOExample();
+        ConfigDOExample.Criteria criteria = example.createCriteria();
+        criteria.andConfigKeyEqualTo(HOT_CITY_ADCODE);
+        criteria.andDeletedEqualTo(false);
+        List<ConfigDO> configDOList = configDOMapper.selectByExampleWithBLOBs(example);
+        ConfigDO configDO = CollectionUtils.isEmpty(configDOList) ? null : configDOList.get(0);
+        if (configDO == null) {
+            return null;
+        }
+        return configDO.getConfigValue() == null ? null : JSON.parseArray(configDO.getConfigValue(), CityAdCodeDTO.class);
+    }
+
+    public void addHotCity(CityAdCodeDTO cityAdCodeDTO) {
+        if (cityAdCodeDTO == null) {
+            return;
+        }
+        ConfigDOExample example = new ConfigDOExample();
+        ConfigDOExample.Criteria criteria = example.createCriteria();
+        criteria.andConfigKeyEqualTo(HOT_CITY_ADCODE);
+        criteria.andDeletedEqualTo(false);
+        List<ConfigDO> configDOList = configDOMapper.selectByExampleWithBLOBs(example);
+        ConfigDO configDO = CollectionUtils.isEmpty(configDOList) ? null : configDOList.get(0);
+        List<CityAdCodeDTO> cityAdCodeDTOS = configDO.getConfigValue() == null ? new ArrayList<>() :
+                JSON.parseArray(configDO.getConfigValue(), CityAdCodeDTO.class);
+        for (CityAdCodeDTO item : cityAdCodeDTOS) {
+            if (item.getCityName().equals(cityAdCodeDTO.getCityName())) {
+                return;
+            }
+        }
+        cityAdCodeDTOS.add(cityAdCodeDTO);
+        String value = JSON.toJSONString(cityAdCodeDTOS);
+
+        configDO.setGmtModify(new Date());
+        configDO.setModifier("system");
+        configDO.setConfigValue(value);
+        configDOMapper.updateByPrimaryKeySelective(configDO);
+    }
+
+    public List<CityAdCodeDTO> getAllCityCode() {
+        ConfigDOExample example = new ConfigDOExample();
+        ConfigDOExample.Criteria criteria = example.createCriteria();
+        criteria.andConfigKeyEqualTo(CITY_ADCODE);
+        criteria.andDeletedEqualTo(false);
+        List<ConfigDO> configDOList = configDOMapper.selectByExampleWithBLOBs(example);
+
+        List<CityAdCodeDTO> res = new ArrayList<>();
+        for (ConfigDO configDO : configDOList) {
+            if (configDO.getConfigValue() != null) {
+                res.addAll(JSON.parseArray(configDO.getConfigValue(), CityAdCodeDTO.class));
+            }
+        }
+        return res;
     }
 }

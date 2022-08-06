@@ -3,8 +3,8 @@
 <mapper namespace="com.uio.monitor.mapper.UserDOMapper">
   <resultMap id="BaseResultMap" type="com.uio.monitor.entity.UserDO">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="gmt_create" jdbcType="DATE" property="gmtCreate" />
-    <result column="gmt_modify" jdbcType="DATE" property="gmtModify" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_modify" jdbcType="TIMESTAMP" property="gmtModify" />
     <result column="creator" jdbcType="VARCHAR" property="creator" />
     <result column="modifier" jdbcType="VARCHAR" property="modifier" />
     <result column="deleted" jdbcType="BIT" property="deleted" />
@@ -113,7 +113,7 @@
       account, telephone, password, 
       email, nick_name, head_image_url
       )
-    values (#{id,jdbcType=BIGINT}, #{gmtCreate,jdbcType=DATE}, #{gmtModify,jdbcType=DATE}, 
+    values (#{id,jdbcType=BIGINT}, #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModify,jdbcType=TIMESTAMP}, 
       #{creator,jdbcType=VARCHAR}, #{modifier,jdbcType=VARCHAR}, #{deleted,jdbcType=BIT}, 
       #{account,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
       #{email,jdbcType=VARCHAR}, #{nickName,jdbcType=VARCHAR}, #{headImageUrl,jdbcType=VARCHAR}
@@ -164,10 +164,10 @@
         #{id,jdbcType=BIGINT},
       </if>
       <if test="gmtCreate != null">
-        #{gmtCreate,jdbcType=DATE},
+        #{gmtCreate,jdbcType=TIMESTAMP},
       </if>
       <if test="gmtModify != null">
-        #{gmtModify,jdbcType=DATE},
+        #{gmtModify,jdbcType=TIMESTAMP},
       </if>
       <if test="creator != null">
         #{creator,jdbcType=VARCHAR},
@@ -211,10 +211,10 @@
         id = #{record.id,jdbcType=BIGINT},
       </if>
       <if test="record.gmtCreate != null">
-        gmt_create = #{record.gmtCreate,jdbcType=DATE},
+        gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP},
       </if>
       <if test="record.gmtModify != null">
-        gmt_modify = #{record.gmtModify,jdbcType=DATE},
+        gmt_modify = #{record.gmtModify,jdbcType=TIMESTAMP},
       </if>
       <if test="record.creator != null">
         creator = #{record.creator,jdbcType=VARCHAR},
@@ -251,8 +251,8 @@
   <update id="updateByExample" parameterType="map">
     update tb_user
     set id = #{record.id,jdbcType=BIGINT},
-      gmt_create = #{record.gmtCreate,jdbcType=DATE},
-      gmt_modify = #{record.gmtModify,jdbcType=DATE},
+      gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP},
+      gmt_modify = #{record.gmtModify,jdbcType=TIMESTAMP},
       creator = #{record.creator,jdbcType=VARCHAR},
       modifier = #{record.modifier,jdbcType=VARCHAR},
       deleted = #{record.deleted,jdbcType=BIT},
@@ -270,10 +270,10 @@
     update tb_user
     <set>
       <if test="gmtCreate != null">
-        gmt_create = #{gmtCreate,jdbcType=DATE},
+        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
       </if>
       <if test="gmtModify != null">
-        gmt_modify = #{gmtModify,jdbcType=DATE},
+        gmt_modify = #{gmtModify,jdbcType=TIMESTAMP},
       </if>
       <if test="creator != null">
         creator = #{creator,jdbcType=VARCHAR},
@@ -307,8 +307,8 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.uio.monitor.entity.UserDO">
     update tb_user
-    set gmt_create = #{gmtCreate,jdbcType=DATE},
-      gmt_modify = #{gmtModify,jdbcType=DATE},
+    set gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      gmt_modify = #{gmtModify,jdbcType=TIMESTAMP},
       creator = #{creator,jdbcType=VARCHAR},
       modifier = #{modifier,jdbcType=VARCHAR},
       deleted = #{deleted,jdbcType=BIT},

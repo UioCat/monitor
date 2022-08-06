@@ -21,4 +21,6 @@ public interface MonitorConstant {
      * 本人邮箱
      */
     String MY_EMAIL = "406453373@qq.com";
+
+    String SERVER_URL = "https://www.uiofield.top/server/monitor";
 }

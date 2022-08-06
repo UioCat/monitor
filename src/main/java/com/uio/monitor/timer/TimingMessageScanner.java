@@ -43,8 +43,9 @@ public class TimingMessageScanner {
      * 5分钟锁
      */
     private final static Long TIMING_MESSAGE_LOCK_TIME = 5 * 1000L;
+
     /**
-     * 扫描消息
+     * 扫描定时消息
      * 10s扫描
      */
     @Scheduled(cron = "*/10 * * * * ?")

@@ -17,12 +17,11 @@ public class URLConnection {
     /**
      * post请求封装 参数为?a=1&b=2&c=3
      * @param path 接口地址
-     * @param Info 参数
      * @return
      * @throws IOException
      */
-    public static String getResponse(String path,String Info) throws IOException{
-
+    public static String getResponse(String path) throws IOException{
+        log.info("getResponse for get request, path:{}, info:{}", path);
         //1, 得到URL对象
         URL url = new URL(path);
 
@@ -36,9 +35,9 @@ public class URLConnection {
         conn.setDoOutput(true);
         conn.setDoInput(true);//当前的连接可以从服务器读取内容, 默认是true
         //5, 获取向服务器写出数据的流
-        OutputStream os = conn.getOutputStream();
-        os.write(Info.getBytes());
-        os.flush();
+//        OutputStream os = conn.getOutputStream();
+//        os.write(info.getBytes());
+//        os.flush();
         //6, 获取响应的数据
         //得到服务器写回的响应数据
         BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(),"utf-8"));

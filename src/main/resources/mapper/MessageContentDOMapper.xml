@@ -10,6 +10,7 @@
     <result column="deleted" jdbcType="BIT" property="deleted" />
     <result column="source" jdbcType="VARCHAR" property="source" />
     <result column="source_id" jdbcType="VARCHAR" property="sourceId" />
+    <result column="sender" jdbcType="VARCHAR" property="sender" />
     <result column="process_state" jdbcType="VARCHAR" property="processState" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.uio.monitor.entity.MessageContentDO">
@@ -74,7 +75,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, gmt_create, gmt_modify, creator, modifier, deleted, source, source_id, process_state
+    id, gmt_create, gmt_modify, creator, modifier, deleted, source, source_id, sender, 
+    process_state
   </sql>
   <sql id="Blob_Column_List">
     message_content
@@ -130,12 +132,12 @@
   <insert id="insert" parameterType="com.uio.monitor.entity.MessageContentDO">
     insert into tb_message_content (id, gmt_create, gmt_modify, 
       creator, modifier, deleted, 
-      source, source_id, process_state, 
-      message_content)
+      source, source_id, sender, 
+      process_state, message_content)
     values (#{id,jdbcType=BIGINT}, #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModify,jdbcType=TIMESTAMP}, 
       #{creator,jdbcType=VARCHAR}, #{modifier,jdbcType=VARCHAR}, #{deleted,jdbcType=BIT}, 
-      #{source,jdbcType=VARCHAR}, #{sourceId,jdbcType=VARCHAR}, #{processState,jdbcType=VARCHAR}, 
-      #{messageContent,jdbcType=LONGVARCHAR})
+      #{source,jdbcType=VARCHAR}, #{sourceId,jdbcType=VARCHAR}, #{sender,jdbcType=VARCHAR}, 
+      #{processState,jdbcType=VARCHAR}, #{messageContent,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.uio.monitor.entity.MessageContentDO">
     insert into tb_message_content
@@ -163,6 +165,9 @@
       </if>
       <if test="sourceId != null">
         source_id,
+      </if>
+      <if test="sender != null">
+        sender,
       </if>
       <if test="processState != null">
         process_state,
@@ -195,6 +200,9 @@
       </if>
       <if test="sourceId != null">
         #{sourceId,jdbcType=VARCHAR},
+      </if>
+      <if test="sender != null">
+        #{sender,jdbcType=VARCHAR},
       </if>
       <if test="processState != null">
         #{processState,jdbcType=VARCHAR},
@@ -237,6 +245,9 @@
       <if test="record.sourceId != null">
         source_id = #{record.sourceId,jdbcType=VARCHAR},
       </if>
+      <if test="record.sender != null">
+        sender = #{record.sender,jdbcType=VARCHAR},
+      </if>
       <if test="record.processState != null">
         process_state = #{record.processState,jdbcType=VARCHAR},
       </if>
@@ -258,6 +269,7 @@
       deleted = #{record.deleted,jdbcType=BIT},
       source = #{record.source,jdbcType=VARCHAR},
       source_id = #{record.sourceId,jdbcType=VARCHAR},
+      sender = #{record.sender,jdbcType=VARCHAR},
       process_state = #{record.processState,jdbcType=VARCHAR},
       message_content = #{record.messageContent,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
@@ -274,6 +286,7 @@
       deleted = #{record.deleted,jdbcType=BIT},
       source = #{record.source,jdbcType=VARCHAR},
       source_id = #{record.sourceId,jdbcType=VARCHAR},
+      sender = #{record.sender,jdbcType=VARCHAR},
       process_state = #{record.processState,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -303,6 +316,9 @@
       <if test="sourceId != null">
         source_id = #{sourceId,jdbcType=VARCHAR},
       </if>
+      <if test="sender != null">
+        sender = #{sender,jdbcType=VARCHAR},
+      </if>
       <if test="processState != null">
         process_state = #{processState,jdbcType=VARCHAR},
       </if>
@@ -321,6 +337,7 @@
       deleted = #{deleted,jdbcType=BIT},
       source = #{source,jdbcType=VARCHAR},
       source_id = #{sourceId,jdbcType=VARCHAR},
+      sender = #{sender,jdbcType=VARCHAR},
       process_state = #{processState,jdbcType=VARCHAR},
       message_content = #{messageContent,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=BIGINT}
@@ -334,6 +351,7 @@
       deleted = #{deleted,jdbcType=BIT},
       source = #{source,jdbcType=VARCHAR},
       source_id = #{sourceId,jdbcType=VARCHAR},
+      sender = #{sender,jdbcType=VARCHAR},
       process_state = #{processState,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>

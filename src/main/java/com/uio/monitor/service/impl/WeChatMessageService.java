@@ -39,7 +39,7 @@ public class WeChatMessageService extends AbstractMessageService {
                     sourceId, receiver, sender);
             return false;
         }
-
+        log.info("send msg to wechat, receiver:{}, message:{}", receiver, message);
         JSONObject jsonParam = new JSONObject();
         jsonParam.put("toSend", receiver);
         jsonParam.put("message", message);

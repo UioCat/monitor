@@ -19,6 +19,8 @@ public class MessageContentDO {
 
     private String sourceId;
 
+    private String sender;
+
     private String processState;
 
     private String messageContent;
@@ -85,6 +87,14 @@ public class MessageContentDO {
 
     public void setSourceId(String sourceId) {
         this.sourceId = sourceId;
+    }
+
+    public String getSender() {
+        return sender;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
     }
 
     public String getProcessState() {
