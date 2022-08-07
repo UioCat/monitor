@@ -45,6 +45,7 @@ public class ConfigManager {
 
     private static final String HOT_CITY_ADCODE = "hot_city_adcode";
     private static final String CITY_ADCODE = "city_adcode";
+    private static final String WECHAT_ROBOT_HELP = "WECHAT_ROBOT_HELP";
 
     /**
      * 新增一个带监测的服务器数据
@@ -278,4 +279,14 @@ public class ConfigManager {
         }
         return res;
     }
+
+    public String getWechatRobotHelpConfig() {
+        ConfigDOExample example = new ConfigDOExample();
+        ConfigDOExample.Criteria criteria = example.createCriteria();
+        criteria.andConfigKeyEqualTo(WECHAT_ROBOT_HELP);
+        criteria.andDeletedEqualTo(false);
+        List<ConfigDO> configDOList = configDOMapper.selectByExampleWithBLOBs(example);
+        return CollectionUtils.isEmpty(configDOList) ? null : configDOList.get(0).getConfigValue();
+    }
+
 }

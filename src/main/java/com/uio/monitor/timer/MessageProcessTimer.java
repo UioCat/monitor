@@ -55,7 +55,8 @@ public class MessageProcessTimer {
      * 5分钟锁
      */
     private final static Long TIMING_MESSAGE_LOCK_TIME = 5 * 1000L;
-    private final static String JOKE_URL = "https://kfc-crazy-thursday.vercel.app/api/index";
+    private final static String JOKE_URL = "https://api.xiaobaibk.com/api/wdz/";
+    private final static String CRAZY_THURSDAY = "https://kfc-crazy-thursday.vercel.app/api/index";
 
     /**
      * 扫描定时消息
@@ -86,16 +87,9 @@ public class MessageProcessTimer {
         String content = messageContentDO.getMessageContent();
         String sourceId = messageContentDO.getSourceId();
         String source = messageContentDO.getSource();
-        String response = null;
-        if (content.contains("天气")) {
-            response = this.weatherProcess(content);
-        } else {
-            try {
-                response = URLConnection.getResponse(JOKE_URL);
-            } catch (IOException e) {
-                log.warn("JOKE_URL ioe exception, url:{}, e,", JOKE_URL, e);
-            }
-        }
+
+        String response = this.messageContentProcess(content);
+
         PushWayEnum pushWayEnum = PushWayEnum.getByName(source);
         PushMessageService pushMessageService = pushWayEnum == null ?
                 null : pushMessageServiceMap.get(pushWayEnum.getServiceName());
@@ -109,6 +103,29 @@ public class MessageProcessTimer {
             messageContentManager.updateState(messageContentDO.getId(), ProcessMessageContentStateEnum.PROCESSING,
                     ProcessMessageContentStateEnum.FINISH);
         }
+    }
+
+    public String messageContentProcess(String content) {
+        String response = null;
+        if (content.contains("天气")) {
+            response = this.weatherProcess(content);
+        } else if (content.contains("疯狂星期四")) {
+            try {
+                response = URLConnection.getResponse(CRAZY_THURSDAY);
+            } catch (IOException e) {
+                log.warn("http req ioe exception, url:{}, e,", CRAZY_THURSDAY, e);
+            }
+        } else if (content.equals("help")) {
+            response = configManager.getWechatRobotHelpConfig();
+        }
+        else {
+            try {
+                response = URLConnection.getResponse(JOKE_URL);
+            } catch (IOException e) {
+                log.warn("JOKE_URL ioe exception, url:{}, e,", JOKE_URL, e);
+            }
+        }
+        return response;
     }
 
     public String weatherProcess(String content) {

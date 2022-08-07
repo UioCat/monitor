@@ -107,8 +107,8 @@ public class Utils {
         return weatherInfoVO.getCity() + "天气，" + "湿度：" + weatherInfoVO.getHumidity() + "，"
                 + "气温：" + weatherInfoVO.getTemperature() + "，"
                 + weatherInfoVO.getWeather() + "天，"
-                + weatherInfoVO.getWindDirection() + "风" + weatherInfoVO.getWindPower() + "，"
-                + "更新时间：" + weatherInfoVO.getReportTime();
+                + weatherInfoVO.getWindDirection() + "风" + weatherInfoVO.getWindPower();
+                //+ "，"  + "更新时间：" + weatherInfoVO.getReportTime();
     }
 
 }

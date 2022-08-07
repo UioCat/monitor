@@ -7,6 +7,7 @@ import com.uio.monitor.common.BackMessage;
 import com.uio.monitor.constant.MonitorConstant;
 import com.uio.monitor.controller.base.BaseController;
 import com.uio.monitor.entity.GetHomeDO;
+import com.uio.monitor.manager.ConfigManager;
 import com.uio.monitor.manager.GetHomeManager;
 import com.uio.monitor.service.EmailService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,8 @@ public class HomeController extends BaseController {
     private GetHomeManager getHomeManager;
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private ConfigManager configManager;
 
     /**
      * 到家时间记录
@@ -58,6 +61,14 @@ public class HomeController extends BaseController {
         // 由于苹果快捷指令触发URL会重复触发两次，所以设置30s内幂等
         emailService.sendQuietMessage("406453373@qq.com", "门锁打开通知",
                 "门锁已经打开，时间：" + df.format(System.currentTimeMillis()), 30L);
+        emailService.sendQuietMessage("478633420@qq.com", "门锁打开通知",
+                "门锁已经打开，时间：" + df.format(System.currentTimeMillis()), 30L);
         return BackMessage.success();
+    }
+
+    @GetMapping("/getScreen")
+    public String getScreen(@RequestParam String secretKey) {
+        super.verifyKey(secretKey);
+        return configManager.queryAndUpdateMacScreenBrightness();
     }
 }

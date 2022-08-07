@@ -3,7 +3,7 @@ package com.uio.monitor;
 import com.alibaba.fastjson.JSON;
 import com.huaban.analysis.jieba.JiebaSegmenter;
 import com.huaban.analysis.jieba.SegToken;
-import com.uio.monitor.controller.MessageController;
+import com.uio.monitor.manager.ConfigManager;
 import com.uio.monitor.timer.MessageProcessTimer;
 import com.uio.monitor.utils.Utils;
 import com.uio.monitor.vo.WeatherInfoVO;
@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -31,7 +30,9 @@ public class WeatherTest {
     @Value("${config.secretKey:}")
     private String secretKey;
     @Autowired
-    MessageProcessTimer messageProcessTimer;
+    private MessageProcessTimer messageProcessTimer;
+    @Autowired
+    private ConfigManager configManager;
 
     @Test
     public void weatherService() {
@@ -45,6 +46,12 @@ public class WeatherTest {
     public void weatherProcessTest() {
         String res = messageProcessTimer.weatherProcess("今天越城区天气怎么样");
         log.info("messageProcessTimer.weatherProcess res:{}", res);
+    }
+
+    @Test
+    public void messageProcessTest() {
+        String response = messageProcessTimer.messageContentProcess("help");
+        log.info("messageProcessTimer.messageContentProcess res:{}", response);
     }
 
     @Test
