@@ -20,11 +20,9 @@ public class WechatMessageServiceTest {
 
     @Test
     public void sendMessageToWechat() {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("message", "你好 -- from Java");
-        jsonObject.put("verifyCode", "");
 
-        weChatMessageService.sendMessage("test_sourceId","test_hanxun", "读书角 - 微信分角",
-                PushWayEnum.WECHAT, jsonObject.toJSONString());
+        weChatMessageService.sendMessage("test_sourceId","ziji", "自己",
+                PushWayEnum.WECHAT, "即时测试2\\r\\n" +
+                        "即时测试2");
     }
 }

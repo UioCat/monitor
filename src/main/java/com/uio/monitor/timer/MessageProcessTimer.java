@@ -75,6 +75,11 @@ public class MessageProcessTimer {
             }
         }
         // 将处理失败的消息改状态
+        List<MessageContentDO> failedMessageList = messageContentManager.queryProcessFailedMessage();
+        Optional.ofNullable(failedMessageList).orElse(Collections.emptyList()).forEach(item -> {
+            messageContentManager.updateState(item.getId(), ProcessMessageContentStateEnum.PROCESSING,
+                    ProcessMessageContentStateEnum.INIT);
+        });
     }
 
     private void messageProcess(MessageContentDO messageContentDO) {

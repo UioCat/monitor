@@ -62,6 +62,7 @@ public class TimingMessageScanner {
             try {
                 boolean lock = cacheService.lock(lockName, uuid, TIMING_MESSAGE_LOCK_TIME.toString(), 0);
                 if (lock) {
+                    log.info("get lock success, lockName:{}, lockTime:{}", lockName, TIMING_MESSAGE_LOCK_TIME);
                     String pushWay = item.getPushWay();
                     PushWayEnum pushWayEnum = PushWayEnum.getByName(pushWay);
                     if (pushWayEnum == null) {
