@@ -285,7 +285,7 @@ public class BillService {
             log.warn("parse bill failed");
             throw new CustomException(BackEnum.DATA_ERROR);
         }
-        billDO.setBillType(billDO.getBillType());
+        billDO.setBillType(BillTypeEnum.CONSUME.name());
         billDO.setProduceWay(billProduceWayTypeEnum.name()); // BillProduceWayTypeEnum
         billDO.setAmount(new BigDecimal(billExcelDTO.getAmount()));
         billDO.setDescription(billExcelDTO.getDescription());
