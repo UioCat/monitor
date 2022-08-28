@@ -18,13 +18,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.Filter;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -65,6 +64,9 @@ public class WebInterceptorAop {
             // POST 等 请求
             Object[] paramArray = proceedingJoinPoint.getArgs();
             for (Object o : paramArray) {
+                if (o instanceof MultipartFile) {
+                    continue;
+                }
                 params.append(JSON.toJSONString(o)).append(",");
             }
         }

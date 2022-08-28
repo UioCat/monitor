@@ -3,6 +3,7 @@ package com.uio.monitor.service;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
 import com.uio.monitor.common.BackEnum;
+import com.uio.monitor.common.BillProduceWayTypeEnum;
 import com.uio.monitor.common.BillTypeEnum;
 import com.uio.monitor.common.CustomException;
 import com.uio.monitor.controller.req.AddBillReq;
@@ -14,9 +15,11 @@ import com.uio.monitor.entity.BillDO;
 import com.uio.monitor.manager.BillManager;
 import com.uio.monitor.manager.ConfigManager;
 import com.uio.monitor.utils.Utils;
+import com.uio.monitor.vo.BillExcelDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
@@ -228,7 +231,8 @@ public class BillService {
                     Utils.getApartDays(earliestTime, latestTime) + 1);
             return res;
         } else {
-            Map<String, List<BillDO>> billGroupByCategoryMap = billDOList.stream().collect(Collectors.groupingBy(BillDO::getCategory));
+            Map<String, List<BillDO>> billGroupByCategoryMap = Optional.ofNullable(billDOList).orElse(
+                    new ArrayList<>(0)).stream().collect(Collectors.groupingBy(BillDO::getCategory));
             Set<Map.Entry<String, List<BillDO>>> entries = billGroupByCategoryMap.entrySet();
 
             double totalAmount = 0.0;
@@ -253,6 +257,40 @@ public class BillService {
             res.add(0, billStatisticsDTO);
             return res;
         }
+    }
+
+    @Transactional
+    public void exportBillList(List<BillExcelDTO> excelDTOList, Long userId) {
+        excelDTOList.forEach(item -> {
+            BillDO billDO = convertBillDO(item, userId);
+            billManager.insert(billDO);
+        });
+    }
+
+    private BillDO convertBillDO(BillExcelDTO billExcelDTO, Long userId) {
+        BillProduceWayTypeEnum billProduceWayTypeEnum = BillProduceWayTypeEnum.getByDesc(billExcelDTO.getProductWay());
+        if (billProduceWayTypeEnum == null) {
+            billProduceWayTypeEnum = BillProduceWayTypeEnum.ALI_PAY;
+        }
+        Boolean isLargeCargo = billExcelDTO.getLargeCargo() != null && billExcelDTO.getLargeCargo().equals("1");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        BillDO billDO = new BillDO();
+        billDO.setUserId(userId);
+        billDO.setCreator(userId.toString());
+        billDO.setModifier(userId.toString());
+        try {
+            billDO.setProduceTime(format.parse(billExcelDTO.getProduceTime()));
+        } catch (ParseException e) {
+            log.warn("parse bill failed");
+            throw new CustomException(BackEnum.DATA_ERROR);
+        }
+        billDO.setBillType(billDO.getBillType());
+        billDO.setProduceWay(billProduceWayTypeEnum.name()); // BillProduceWayTypeEnum
+        billDO.setAmount(new BigDecimal(billExcelDTO.getAmount()));
+        billDO.setDescription(billExcelDTO.getDescription());
+        billDO.setCategory(billExcelDTO.getCategory());
+        billDO.setLargeItem(isLargeCargo);
+        return billDO;
     }
 
     private BillDTO convertBillDTO(BillDO billDO) {

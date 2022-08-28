@@ -1,5 +1,8 @@
 package com.uio.monitor.controller;
 
+import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.read.listener.PageReadListener;
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
 import com.uio.monitor.common.BackEnum;
 import com.uio.monitor.common.BackMessage;
@@ -15,11 +18,15 @@ import com.uio.monitor.controller.resp.BillStatisticsDTO;
 import com.uio.monitor.manager.BillManager;
 import com.uio.monitor.manager.ConfigManager;
 import com.uio.monitor.service.BillService;
+import com.uio.monitor.vo.BillExcelDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,6 +37,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/bill")
+@Slf4j
 public class BillController extends BaseController {
 
     @Autowired
@@ -158,4 +166,25 @@ public class BillController extends BaseController {
                 largeItem);
         return BackMessage.success(billStatistics);
     }
+
+    /**
+     * 从excel文件中读取账单数据
+     */
+    @PostMapping("/inputBillList")
+    @ResponseBody
+    public BackMessage<Void> upload(MultipartFile file)  {
+        Long userId = super.getUserId();
+        try {
+            List<BillExcelDTO> billExcelDTOS = new ArrayList<>();
+            EasyExcel.read(file.getInputStream(), BillExcelDTO.class, new PageReadListener<BillExcelDTO>(dataList -> {
+                billExcelDTOS.addAll(dataList);
+            })).sheet().doRead();
+            billService.exportBillList(billExcelDTOS, userId);
+            return BackMessage.success();
+        } catch (IOException e) {
+            log.error("read bill from excel io exception, ", e);
+            throw new CustomException(BackEnum.UNKNOWN_ERROR);
+        }
+    }
+
 }
