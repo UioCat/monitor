@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -231,7 +232,7 @@ public class BillService {
                     Utils.getApartDays(earliestTime, latestTime) + 1);
             return res;
         } else {
-            Map<String, List<BillDO>> billGroupByCategoryMap = Optional.ofNullable(billDOList).orElse(
+            Map<String, List<BillDO>> billGroupByCategoryMap = Optional.of(billDOList).orElse(
                     new ArrayList<>(0)).stream().collect(Collectors.groupingBy(BillDO::getCategory));
             Set<Map.Entry<String, List<BillDO>>> entries = billGroupByCategoryMap.entrySet();
 
@@ -288,7 +289,7 @@ public class BillService {
         billDO.setProduceWay(billProduceWayTypeEnum.name()); // BillProduceWayTypeEnum
         billDO.setAmount(new BigDecimal(billExcelDTO.getAmount()));
         billDO.setDescription(billExcelDTO.getDescription());
-        billDO.setCategory(billExcelDTO.getCategory());
+        billDO.setCategory(StringUtils.isEmpty(billExcelDTO.getCategory()) ? "其他" : billExcelDTO.getCategory());
         billDO.setLargeItem(isLargeCargo);
         return billDO;
     }
