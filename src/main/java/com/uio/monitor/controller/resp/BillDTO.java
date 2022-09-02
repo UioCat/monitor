@@ -41,4 +41,9 @@ public class BillDTO {
      * true：大件
      */
     private Boolean largeItem;
+    /**
+     * 是否为周期账单添加
+     * true：周期账单添加
+     */
+    private Boolean periodBill;
 }

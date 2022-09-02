@@ -3,7 +3,7 @@ package com.uio.monitor.entity;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class BillDO {
+public class PeriodBillDO {
     private Long id;
 
     private Long userId;
@@ -18,7 +18,9 @@ public class BillDO {
 
     private Boolean deleted;
 
-    private Date produceTime;
+    private Integer generateDay;
+
+    private Integer generateCount;
 
     private String billType;
 
@@ -29,10 +31,6 @@ public class BillDO {
     private String description;
 
     private String category;
-
-    private Boolean largeItem;
-
-    private String extra;
 
     public Long getId() {
         return id;
@@ -90,12 +88,20 @@ public class BillDO {
         this.deleted = deleted;
     }
 
-    public Date getProduceTime() {
-        return produceTime;
+    public Integer getGenerateDay() {
+        return generateDay;
     }
 
-    public void setProduceTime(Date produceTime) {
-        this.produceTime = produceTime;
+    public void setGenerateDay(Integer generateDay) {
+        this.generateDay = generateDay;
+    }
+
+    public Integer getGenerateCount() {
+        return generateCount;
+    }
+
+    public void setGenerateCount(Integer generateCount) {
+        this.generateCount = generateCount;
     }
 
     public String getBillType() {
@@ -136,21 +142,5 @@ public class BillDO {
 
     public void setCategory(String category) {
         this.category = category;
-    }
-
-    public Boolean getLargeItem() {
-        return largeItem;
-    }
-
-    public void setLargeItem(Boolean largeItem) {
-        this.largeItem = largeItem;
-    }
-
-    public String getExtra() {
-        return extra;
-    }
-
-    public void setExtra(String extra) {
-        this.extra = extra;
     }
 }

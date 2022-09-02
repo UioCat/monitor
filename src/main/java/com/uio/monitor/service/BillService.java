@@ -7,13 +7,17 @@ import com.uio.monitor.common.BillProduceWayTypeEnum;
 import com.uio.monitor.common.BillTypeEnum;
 import com.uio.monitor.common.CustomException;
 import com.uio.monitor.controller.req.AddBillReq;
+import com.uio.monitor.controller.req.AddPeriodBillReq;
 import com.uio.monitor.controller.req.UpdateBillReq;
 import com.uio.monitor.controller.resp.BillConfigDTO;
 import com.uio.monitor.controller.resp.BillDTO;
 import com.uio.monitor.controller.resp.BillStatisticsDTO;
 import com.uio.monitor.entity.BillDO;
+import com.uio.monitor.entity.PeriodBillDO;
+import com.uio.monitor.entity.dto.BillExtraDTO;
 import com.uio.monitor.manager.BillManager;
 import com.uio.monitor.manager.ConfigManager;
+import com.uio.monitor.manager.PeriodBillManager;
 import com.uio.monitor.utils.Utils;
 import com.uio.monitor.vo.BillExcelDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +51,8 @@ public class BillService {
     private BillManager billManager;
     @Autowired
     private ConfigManager configManager;
+    @Autowired
+    private PeriodBillManager periodBillManager;
 
     /**
      * 插入一条账单记录
@@ -78,6 +84,14 @@ public class BillService {
         billDO.setLargeItem(false);
         billManager.insert(billDO);
         return true;
+    }
+
+    /**
+     * 添加周期性账单
+     */
+    public void addPeriodBill(AddPeriodBillReq addPeriodBillReq, Long userId) {
+        PeriodBillDO periodBillDO = this.convertPeriodBillDO(addPeriodBillReq, userId);
+        periodBillManager.insert(periodBillDO);
     }
 
     /**
@@ -268,6 +282,38 @@ public class BillService {
         });
     }
 
+    @Transactional
+    public void addBillByPeriodBill(PeriodBillDO periodBillDO) {
+        int count = periodBillManager.updateGenerateCount(periodBillDO.getGenerateCount(), periodBillDO.getId(),
+                periodBillDO.getUserId());
+        if (count == 0) {
+            return;
+        }
+        BillDO billDO = convertBillDO(periodBillDO);
+        billManager.insert(billDO);
+    }
+
+    private PeriodBillDO convertPeriodBillDO(AddPeriodBillReq addPeriodBillReq, Long userId) {
+        BillTypeEnum billTypeEnum = BillTypeEnum.getByName(addPeriodBillReq.getBillType());
+        BillProduceWayTypeEnum billProduceWayTypeEnum = BillProduceWayTypeEnum.getByName(
+                addPeriodBillReq.getProduceWayType());
+        if (billTypeEnum == null) {
+            throw new CustomException(BackEnum.PARAM_ERROR);
+        }
+        PeriodBillDO periodBillDO = new PeriodBillDO();
+        periodBillDO.setUserId(userId);
+        periodBillDO.setCreator(userId.toString());
+        periodBillDO.setModifier(userId.toString());
+        periodBillDO.setGenerateDay(addPeriodBillReq.getGenerateDay());
+        periodBillDO.setGenerateCount(addPeriodBillReq.getGenerateCount());
+        periodBillDO.setBillType(billTypeEnum.name());
+        periodBillDO.setProduceWay(billProduceWayTypeEnum == null ? null : billProduceWayTypeEnum.name());
+        periodBillDO.setAmount(new BigDecimal(String.valueOf(addPeriodBillReq.getAmount())));
+        periodBillDO.setDescription(addPeriodBillReq.getDesc());
+        periodBillDO.setCategory(addPeriodBillReq.getBillType());
+        return periodBillDO;
+    }
+
     private BillDO convertBillDO(BillExcelDTO billExcelDTO, Long userId) {
         BillProduceWayTypeEnum billProduceWayTypeEnum = BillProduceWayTypeEnum.getByDesc(billExcelDTO.getProductWay());
         if (billProduceWayTypeEnum == null) {
@@ -295,6 +341,11 @@ public class BillService {
     }
 
     private BillDTO convertBillDTO(BillDO billDO) {
+        if (billDO == null) {
+            return null;
+        }
+        BillExtraDTO billExtraDTO = BillExtraDTO.convert(billDO.getExtra());
+
         BillDTO billDTO = new BillDTO();
         billDTO.setBillId(billDO.getId());
         billDTO.setProduceTime(billDO.getProduceTime());
@@ -304,7 +355,27 @@ public class BillService {
         billDTO.setDesc(billDO.getDescription());
         billDTO.setCategory(billDO.getCategory());
         billDTO.setLargeItem(billDO.getLargeItem());
+        billDTO.setPeriodBill(billExtraDTO != null && billExtraDTO.getPeriodBill());
         return billDTO;
     }
 
+
+    private BillDO convertBillDO(PeriodBillDO periodBillDO) {
+        BillExtraDTO billExtraDTO = new BillExtraDTO();
+        billExtraDTO.setPeriodBill(true);
+
+        BillDO billDO = new BillDO();
+        billDO.setUserId(periodBillDO.getUserId());
+        billDO.setCreator("system");
+        billDO.setModifier("system");
+        billDO.setProduceTime(new Date());
+        billDO.setBillType(periodBillDO.getBillType());
+        billDO.setProduceWay(periodBillDO.getProduceWay());
+        billDO.setAmount(periodBillDO.getAmount());
+        billDO.setDescription(periodBillDO.getDescription());
+        billDO.setCategory(periodBillDO.getCategory());
+        billDO.setLargeItem(false);
+        billDO.setExtra(BillExtraDTO.convert(billExtraDTO));
+        return billDO;
+    }
 }

@@ -20,6 +20,10 @@ public class RedisConstant {
      */
     private static final String TIMING_MESSAGE_LOCK = "timing_message_lock";
     /**
+     * 周期账单锁
+     */
+    private static final String PERIOD_BILL_LOCK = "SCAN_PERIOD_BILL_LOCK";
+    /**
      * 锁过期时间
      */
     public static final String EXPIRE_TIME = "30000";
@@ -54,5 +58,12 @@ public class RedisConstant {
      */
     public static String getTimingMessageLock(String id) {
         return TIMING_MESSAGE_LOCK + "_" + id;
+    }
+
+    /**
+     * 周期账单分布式锁
+     */
+    public static String getPeriodBillLock(String id) {
+        return PERIOD_BILL_LOCK + "_" + id;
     }
 }

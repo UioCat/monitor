@@ -87,6 +87,12 @@
                enableSelectByExample="true"
                enableUpdateByExample="true">
         </table>
+        <table tableName="tb_period_bill" domainObjectName="PeriodBillDO"
+               enableCountByExample="true"
+               enableDeleteByExample="true"
+               enableSelectByExample="true"
+               enableUpdateByExample="true">
+        </table>
 <!--        <table tableName="tb_bill" domainObjectName="BillDO" enableCountByExample="true" enableDeleteByExample="true"-->
 <!--               enableSelectByExample="true" enableUpdateByExample="true">-->
 <!--        </table>-->

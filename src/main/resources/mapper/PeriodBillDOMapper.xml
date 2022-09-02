@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.uio.monitor.mapper.BillDOMapper">
-  <resultMap id="BaseResultMap" type="com.uio.monitor.entity.BillDO">
+<mapper namespace="com.uio.monitor.mapper.PeriodBillDOMapper">
+  <resultMap id="BaseResultMap" type="com.uio.monitor.entity.PeriodBillDO">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="user_id" jdbcType="BIGINT" property="userId" />
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
@@ -9,14 +9,13 @@
     <result column="creator" jdbcType="VARCHAR" property="creator" />
     <result column="modifier" jdbcType="VARCHAR" property="modifier" />
     <result column="deleted" jdbcType="BIT" property="deleted" />
-    <result column="produce_time" jdbcType="DATE" property="produceTime" />
+    <result column="generate_day" jdbcType="INTEGER" property="generateDay" />
+    <result column="generate_count" jdbcType="INTEGER" property="generateCount" />
     <result column="bill_type" jdbcType="VARCHAR" property="billType" />
     <result column="produce_way" jdbcType="VARCHAR" property="produceWay" />
     <result column="amount" jdbcType="DECIMAL" property="amount" />
     <result column="description" jdbcType="VARCHAR" property="description" />
     <result column="category" jdbcType="VARCHAR" property="category" />
-    <result column="large_item" jdbcType="BIT" property="largeItem" />
-    <result column="extra" jdbcType="VARCHAR" property="extra" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -77,16 +76,16 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, user_id, gmt_create, gmt_modify, creator, modifier, deleted, produce_time, bill_type, 
-    produce_way, amount, description, category, large_item, extra
+    id, user_id, gmt_create, gmt_modify, creator, modifier, deleted, generate_day, generate_count, 
+    bill_type, produce_way, amount, description, category
   </sql>
-  <select id="selectByExample" parameterType="com.uio.monitor.entity.BillDOExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.uio.monitor.entity.PeriodBillDOExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from tb_bill
+    from tb_period_bill
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -97,35 +96,33 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from tb_bill
+    from tb_period_bill
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from tb_bill
+    delete from tb_period_bill
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.uio.monitor.entity.BillDOExample">
-    delete from tb_bill
+  <delete id="deleteByExample" parameterType="com.uio.monitor.entity.PeriodBillDOExample">
+    delete from tb_period_bill
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.uio.monitor.entity.BillDO">
-    insert into tb_bill (id, user_id, gmt_create, 
+  <insert id="insert" parameterType="com.uio.monitor.entity.PeriodBillDO">
+    insert into tb_period_bill (id, user_id, gmt_create, 
       gmt_modify, creator, modifier, 
-      deleted, produce_time, bill_type, 
-      produce_way, amount, description, 
-      category, large_item, extra
-      )
+      deleted, generate_day, generate_count, 
+      bill_type, produce_way, amount, 
+      description, category)
     values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{gmtCreate,jdbcType=TIMESTAMP}, 
       #{gmtModify,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, #{modifier,jdbcType=VARCHAR}, 
-      #{deleted,jdbcType=BIT}, #{produceTime,jdbcType=DATE}, #{billType,jdbcType=VARCHAR}, 
-      #{produceWay,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}, #{description,jdbcType=VARCHAR}, 
-      #{category,jdbcType=VARCHAR}, #{largeItem,jdbcType=BIT}, #{extra,jdbcType=VARCHAR}
-      )
+      #{deleted,jdbcType=BIT}, #{generateDay,jdbcType=INTEGER}, #{generateCount,jdbcType=INTEGER}, 
+      #{billType,jdbcType=VARCHAR}, #{produceWay,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}, 
+      #{description,jdbcType=VARCHAR}, #{category,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.uio.monitor.entity.BillDO">
-    insert into tb_bill
+  <insert id="insertSelective" parameterType="com.uio.monitor.entity.PeriodBillDO">
+    insert into tb_period_bill
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -148,8 +145,11 @@
       <if test="deleted != null">
         deleted,
       </if>
-      <if test="produceTime != null">
-        produce_time,
+      <if test="generateDay != null">
+        generate_day,
+      </if>
+      <if test="generateCount != null">
+        generate_count,
       </if>
       <if test="billType != null">
         bill_type,
@@ -165,12 +165,6 @@
       </if>
       <if test="category != null">
         category,
-      </if>
-      <if test="largeItem != null">
-        large_item,
-      </if>
-      <if test="extra != null">
-        extra,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -195,8 +189,11 @@
       <if test="deleted != null">
         #{deleted,jdbcType=BIT},
       </if>
-      <if test="produceTime != null">
-        #{produceTime,jdbcType=DATE},
+      <if test="generateDay != null">
+        #{generateDay,jdbcType=INTEGER},
+      </if>
+      <if test="generateCount != null">
+        #{generateCount,jdbcType=INTEGER},
       </if>
       <if test="billType != null">
         #{billType,jdbcType=VARCHAR},
@@ -213,22 +210,16 @@
       <if test="category != null">
         #{category,jdbcType=VARCHAR},
       </if>
-      <if test="largeItem != null">
-        #{largeItem,jdbcType=BIT},
-      </if>
-      <if test="extra != null">
-        #{extra,jdbcType=VARCHAR},
-      </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.uio.monitor.entity.BillDOExample" resultType="java.lang.Long">
-    select count(*) from tb_bill
+  <select id="countByExample" parameterType="com.uio.monitor.entity.PeriodBillDOExample" resultType="java.lang.Long">
+    select count(*) from tb_period_bill
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update tb_bill
+    update tb_period_bill
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
@@ -251,8 +242,11 @@
       <if test="record.deleted != null">
         deleted = #{record.deleted,jdbcType=BIT},
       </if>
-      <if test="record.produceTime != null">
-        produce_time = #{record.produceTime,jdbcType=DATE},
+      <if test="record.generateDay != null">
+        generate_day = #{record.generateDay,jdbcType=INTEGER},
+      </if>
+      <if test="record.generateCount != null">
+        generate_count = #{record.generateCount,jdbcType=INTEGER},
       </if>
       <if test="record.billType != null">
         bill_type = #{record.billType,jdbcType=VARCHAR},
@@ -269,19 +263,13 @@
       <if test="record.category != null">
         category = #{record.category,jdbcType=VARCHAR},
       </if>
-      <if test="record.largeItem != null">
-        large_item = #{record.largeItem,jdbcType=BIT},
-      </if>
-      <if test="record.extra != null">
-        extra = #{record.extra,jdbcType=VARCHAR},
-      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update tb_bill
+    update tb_period_bill
     set id = #{record.id,jdbcType=BIGINT},
       user_id = #{record.userId,jdbcType=BIGINT},
       gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP},
@@ -289,20 +277,19 @@
       creator = #{record.creator,jdbcType=VARCHAR},
       modifier = #{record.modifier,jdbcType=VARCHAR},
       deleted = #{record.deleted,jdbcType=BIT},
-      produce_time = #{record.produceTime,jdbcType=DATE},
+      generate_day = #{record.generateDay,jdbcType=INTEGER},
+      generate_count = #{record.generateCount,jdbcType=INTEGER},
       bill_type = #{record.billType,jdbcType=VARCHAR},
       produce_way = #{record.produceWay,jdbcType=VARCHAR},
       amount = #{record.amount,jdbcType=DECIMAL},
       description = #{record.description,jdbcType=VARCHAR},
-      category = #{record.category,jdbcType=VARCHAR},
-      large_item = #{record.largeItem,jdbcType=BIT},
-      extra = #{record.extra,jdbcType=VARCHAR}
+      category = #{record.category,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.uio.monitor.entity.BillDO">
-    update tb_bill
+  <update id="updateByPrimaryKeySelective" parameterType="com.uio.monitor.entity.PeriodBillDO">
+    update tb_period_bill
     <set>
       <if test="userId != null">
         user_id = #{userId,jdbcType=BIGINT},
@@ -322,8 +309,11 @@
       <if test="deleted != null">
         deleted = #{deleted,jdbcType=BIT},
       </if>
-      <if test="produceTime != null">
-        produce_time = #{produceTime,jdbcType=DATE},
+      <if test="generateDay != null">
+        generate_day = #{generateDay,jdbcType=INTEGER},
+      </if>
+      <if test="generateCount != null">
+        generate_count = #{generateCount,jdbcType=INTEGER},
       </if>
       <if test="billType != null">
         bill_type = #{billType,jdbcType=VARCHAR},
@@ -340,31 +330,24 @@
       <if test="category != null">
         category = #{category,jdbcType=VARCHAR},
       </if>
-      <if test="largeItem != null">
-        large_item = #{largeItem,jdbcType=BIT},
-      </if>
-      <if test="extra != null">
-        extra = #{extra,jdbcType=VARCHAR},
-      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.uio.monitor.entity.BillDO">
-    update tb_bill
+  <update id="updateByPrimaryKey" parameterType="com.uio.monitor.entity.PeriodBillDO">
+    update tb_period_bill
     set user_id = #{userId,jdbcType=BIGINT},
       gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
       gmt_modify = #{gmtModify,jdbcType=TIMESTAMP},
       creator = #{creator,jdbcType=VARCHAR},
       modifier = #{modifier,jdbcType=VARCHAR},
       deleted = #{deleted,jdbcType=BIT},
-      produce_time = #{produceTime,jdbcType=DATE},
+      generate_day = #{generateDay,jdbcType=INTEGER},
+      generate_count = #{generateCount,jdbcType=INTEGER},
       bill_type = #{billType,jdbcType=VARCHAR},
       produce_way = #{produceWay,jdbcType=VARCHAR},
       amount = #{amount,jdbcType=DECIMAL},
       description = #{description,jdbcType=VARCHAR},
-      category = #{category,jdbcType=VARCHAR},
-      large_item = #{largeItem,jdbcType=BIT},
-      extra = #{extra,jdbcType=VARCHAR}
+      category = #{category,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

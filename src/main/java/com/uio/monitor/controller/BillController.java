@@ -10,6 +10,7 @@ import com.uio.monitor.common.BillTypeEnum;
 import com.uio.monitor.common.CustomException;
 import com.uio.monitor.controller.base.BaseController;
 import com.uio.monitor.controller.req.AddBillReq;
+import com.uio.monitor.controller.req.AddPeriodBillReq;
 import com.uio.monitor.controller.req.DeleteConfigReq;
 import com.uio.monitor.controller.req.UpdateBillReq;
 import com.uio.monitor.controller.resp.BillConfigDTO;
@@ -55,6 +56,13 @@ public class BillController extends BaseController {
         }
         Boolean res = billService.addBill(addBillReq, super.getUserId());
         return BackMessage.success(res);
+    }
+
+    @PostMapping("/addPeriodBill")
+    public BackMessage<Void> addPeriodBill(@RequestBody @Valid AddPeriodBillReq addPeriodBillReq) {
+        Long userId = super.getUserId();
+        billService.addPeriodBill(addPeriodBillReq, userId);
+        return BackMessage.success();
     }
 
     /**
