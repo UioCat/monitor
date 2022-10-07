@@ -284,9 +284,12 @@ public class BillService {
 
     @Transactional
     public void addBillByPeriodBill(PeriodBillDO periodBillDO) {
+        log.info("about to add period bill, periodBillDO:{}", JSON.toJSONString(periodBillDO));
         int count = periodBillManager.updateGenerateCount(periodBillDO.getGenerateCount(), periodBillDO.getId(),
                 periodBillDO.getUserId());
         if (count == 0) {
+            log.info("updateGenerateCount failed, generateCount:{},id:{}", periodBillDO.getGenerateCount(),
+                    periodBillDO.getId());
             return;
         }
         BillDO billDO = convertBillDO(periodBillDO);

@@ -44,6 +44,7 @@ public class PeriodBillTimer {
 
     @Scheduled(cron = MonitorConstant.SCAN_PERIOD_BILL_CRON)
     public void autoGenerateBillTimer() {
+        log.info("autoGenerateBillTimer trigger");
         List<PeriodBillDO> periodBillDOS = periodBillManager.queryExpirePeriodBill();
         String requestId = "";
         if (!CollectionUtils.isEmpty(periodBillDOS)) {
