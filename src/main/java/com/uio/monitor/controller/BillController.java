@@ -16,6 +16,7 @@ import com.uio.monitor.controller.req.UpdateBillReq;
 import com.uio.monitor.controller.resp.BillConfigDTO;
 import com.uio.monitor.controller.resp.BillDTO;
 import com.uio.monitor.controller.resp.BillStatisticsDTO;
+import com.uio.monitor.controller.resp.PeriodBillDTO;
 import com.uio.monitor.manager.BillManager;
 import com.uio.monitor.manager.ConfigManager;
 import com.uio.monitor.service.BillService;
@@ -63,6 +64,13 @@ public class BillController extends BaseController {
         Long userId = super.getUserId();
         billService.addPeriodBill(addPeriodBillReq, userId);
         return BackMessage.success();
+    }
+
+    @GetMapping("/queryPeriodBillList")
+    BackMessage<List<PeriodBillDTO>> queryPeriodBillList() {
+        Long userId = super.getUserId();
+        List<PeriodBillDTO> periodBillListByUserId = billService.getPeriodBillListByUserId(userId);
+        return BackMessage.success(periodBillListByUserId);
     }
 
     /**

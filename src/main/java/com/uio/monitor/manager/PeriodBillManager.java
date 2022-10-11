@@ -25,6 +25,7 @@ public class PeriodBillManager {
         periodBillDO.setGmtModify(new Date());
         periodBillDO.setGmtCreate(new Date());
         periodBillDO.setDeleted(false);
+        periodBillDO.setAddTime(new Date());
         periodBillDOMapper.insert(periodBillDO);
     }
 
@@ -43,11 +44,14 @@ public class PeriodBillManager {
     public List<PeriodBillDO> queryExpirePeriodBill() {
         Calendar cal = Calendar.getInstance();
         int curDay = cal.get(Calendar.DAY_OF_MONTH);
+        cal.set(Calendar.MONTH, cal.get(Calendar.DAY_OF_MONTH) - 1);
         PeriodBillDOExample example = new PeriodBillDOExample();
         PeriodBillDOExample.Criteria criteria = example.createCriteria();
         criteria.andDeletedEqualTo(false);
         criteria.andGenerateDayLessThanOrEqualTo(curDay);
         criteria.andGenerateCountGreaterThan(0);
+        // 表示距上次添加时间已经过去一个月了
+        criteria.andAddTimeLessThanOrEqualTo(cal.getTime());
         return periodBillDOMapper.selectByExample(example);
     }
 
@@ -71,6 +75,7 @@ public class PeriodBillManager {
         periodBillDO.setGmtModify(new Date());
         periodBillDO.setModifier(userId.toString());
         periodBillDO.setGenerateCount(--oldCount);
+        periodBillDO.setAddTime(new Date());
 
         return periodBillDOMapper.updateByExampleSelective(periodBillDO, example);
     }

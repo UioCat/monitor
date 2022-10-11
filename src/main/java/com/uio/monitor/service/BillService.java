@@ -12,6 +12,7 @@ import com.uio.monitor.controller.req.UpdateBillReq;
 import com.uio.monitor.controller.resp.BillConfigDTO;
 import com.uio.monitor.controller.resp.BillDTO;
 import com.uio.monitor.controller.resp.BillStatisticsDTO;
+import com.uio.monitor.controller.resp.PeriodBillDTO;
 import com.uio.monitor.entity.BillDO;
 import com.uio.monitor.entity.PeriodBillDO;
 import com.uio.monitor.entity.dto.BillExtraDTO;
@@ -92,6 +93,22 @@ public class BillService {
     public void addPeriodBill(AddPeriodBillReq addPeriodBillReq, Long userId) {
         PeriodBillDO periodBillDO = this.convertPeriodBillDO(addPeriodBillReq, userId);
         periodBillManager.insert(periodBillDO);
+    }
+
+    public List<PeriodBillDTO> getPeriodBillListByUserId(Long userId) {
+        List<PeriodBillDO> periodBillDOS = periodBillManager.queryDisablePeriodBillByUserId(userId);
+        return CollectionUtils.isEmpty(periodBillDOS) ? new ArrayList<>(0) : periodBillDOS.stream()
+                .map(this::convertPeriodBillDTO).collect(Collectors.toList());
+    }
+
+    private PeriodBillDTO convertPeriodBillDTO(PeriodBillDO periodBillDO) {
+        PeriodBillDTO periodBillDTO = new PeriodBillDTO();
+        periodBillDTO.setGenerateDay(periodBillDO.getGenerateDay());
+        periodBillDTO.setGenerateCount(periodBillDO.getGenerateCount());
+        periodBillDTO.setAmount(periodBillDO.getAmount().toString());
+        periodBillDTO.setDescription(periodBillDO.getDescription());
+        periodBillDTO.setCategory(periodBillDO.getCategory());
+        return periodBillDTO;
     }
 
     /**

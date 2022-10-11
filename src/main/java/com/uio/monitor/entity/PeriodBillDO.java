@@ -32,6 +32,8 @@ public class PeriodBillDO {
 
     private String category;
 
+    private Date addTime;
+
     public Long getId() {
         return id;
     }
@@ -142,5 +144,13 @@ public class PeriodBillDO {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public Date getAddTime() {
+        return addTime;
+    }
+
+    public void setAddTime(Date addTime) {
+        this.addTime = addTime;
     }
 }
