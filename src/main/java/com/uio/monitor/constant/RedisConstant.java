@@ -23,6 +23,8 @@ public class RedisConstant {
      * 周期账单锁
      */
     private static final String PERIOD_BILL_LOCK = "SCAN_PERIOD_BILL_LOCK";
+
+    private static final String ARRIVE_HOME_FILTER_LOCK = "ARRIVE_HOME_FILTER_LOCK";
     /**
      * 锁过期时间
      */
@@ -65,5 +67,9 @@ public class RedisConstant {
      */
     public static String getPeriodBillLock(String id) {
         return PERIOD_BILL_LOCK + "_" + id;
+    }
+
+    public static String getArriveHomeFilterLock() {
+        return ARRIVE_HOME_FILTER_LOCK;
     }
 }

@@ -46,6 +46,23 @@ public class ConfigManager {
     private static final String HOT_CITY_ADCODE = "hot_city_adcode";
     private static final String CITY_ADCODE = "city_adcode";
     private static final String WECHAT_ROBOT_HELP = "WECHAT_ROBOT_HELP";
+    /**
+     * iphone12 mini Wi-Fi 固定IP
+     */
+    private static final String IPHONE_HOME_IP = "IPHONE_HOME_IP";
+
+    /**
+     * iphone12 mini 家庭固定IP
+     * @return
+     */
+    public String getIPhoneHomeIp() {
+        ConfigDOExample example = new ConfigDOExample();
+        ConfigDOExample.Criteria criteria = example.createCriteria();
+        criteria.andConfigKeyEqualTo(IPHONE_HOME_IP);
+        criteria.andDeletedEqualTo(false);
+        ConfigDO configDO = configDOMapper.selectByExampleWithBLOBs(example).stream().findFirst().orElse(null);
+        return configDO == null ? null : configDO.getConfigValue();
+    }
 
     /**
      * 新增一个带监测的服务器数据
