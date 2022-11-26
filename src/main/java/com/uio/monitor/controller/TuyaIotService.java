@@ -38,7 +38,7 @@ public class TuyaIotService {
     // Tuya云endpoint
     @Value("${config.tuyaEndpoint}")
     private String tuyaEndpoint;
-    @Value("${config.tuyaDeviceId")
+    @Value("${config.tuyaDeviceId}")
     private String deviceId;
 
     private static final String powerOff = "{\"commands\":[{\"code\":\"PowerOff\",\"value\":\"PowerOff\"}]}";
@@ -53,6 +53,7 @@ public class TuyaIotService {
     }
 
     private void powerControll(String powerOn) {
+        // todo 优化结构和日志
         String getTokenPath = "/v1.0/token?grant_type=1";
         Object result = this.execute(getTokenPath, "GET", "", new HashMap<>());
         System.out.println(JSON.toJSONString(result));
