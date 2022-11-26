@@ -48,7 +48,7 @@ public class HomeController extends BaseController {
     @GetMapping("/powerOn")
     public BackMessage<Void> powerOn(@RequestParam String secretKey) {
         super.verifyKey(secretKey);
-        tuyaIotService.powerOff();
+        tuyaIotService.powerOn();
         return BackMessage.success();
     }
 
