@@ -34,6 +34,23 @@ public class HomeController extends BaseController {
     private ConfigManager configManager;
     @Autowired
     private CacheService cacheService;
+    @Autowired
+    private TuyaIotService tuyaIotService;
+
+
+    @GetMapping("/powerOff")
+    public BackMessage<Void> powerOff(@RequestParam String secretKey) {
+        super.verifyKey(secretKey);
+        tuyaIotService.powerOff();
+        return BackMessage.success();
+    }
+
+    @GetMapping("/powerOn")
+    public BackMessage<Void> powerOn(@RequestParam String secretKey) {
+        super.verifyKey(secretKey);
+        tuyaIotService.powerOff();
+        return BackMessage.success();
+    }
 
     /**
      * 到家时间记录
