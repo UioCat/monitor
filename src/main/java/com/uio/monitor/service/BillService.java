@@ -302,8 +302,8 @@ public class BillService {
     @Transactional
     public void addBillByPeriodBill(PeriodBillDO periodBillDO) {
         log.info("about to add period bill, periodBillDO:{}", JSON.toJSONString(periodBillDO));
-        int count = periodBillManager.updateGenerateCount(periodBillDO.getGenerateCount(), periodBillDO.getId(),
-                periodBillDO.getUserId());
+        int count = periodBillManager.updateGenerateCountAndGenerateNextDate(periodBillDO.getGenerateCount(), periodBillDO.getId(),
+                periodBillDO.getUserId(), periodBillDO.getNextAddTime());
         if (count == 0) {
             log.info("updateGenerateCount failed, generateCount:{},id:{}", periodBillDO.getGenerateCount(),
                     periodBillDO.getId());
@@ -320,6 +320,16 @@ public class BillService {
         if (billTypeEnum == null) {
             throw new CustomException(BackEnum.PARAM_ERROR);
         }
+        Integer generateDay = addPeriodBillReq.getGenerateDay();
+        Calendar cale = Calendar.getInstance();
+        int curDay = cale.get(Calendar.DAY_OF_MONTH);
+        int curMonth = cale.get(Calendar.MONTH);
+        if (curDay > generateDay) {
+            // 当前天大于生成天日期，下月生成账单,eg:当前5号，输入1-5号都直接生成下个月开始的周期账单
+            cale.set(Calendar.MONTH, curMonth + 1);
+        }
+        cale.set(Calendar.DAY_OF_MONTH, generateDay);
+
         PeriodBillDO periodBillDO = new PeriodBillDO();
         periodBillDO.setUserId(userId);
         periodBillDO.setCreator(userId.toString());
@@ -331,6 +341,7 @@ public class BillService {
         periodBillDO.setAmount(new BigDecimal(String.valueOf(addPeriodBillReq.getAmount())));
         periodBillDO.setDescription(addPeriodBillReq.getDesc());
         periodBillDO.setCategory(addPeriodBillReq.getBillType());
+        periodBillDO.setNextAddTime(cale.getTime());
         return periodBillDO;
     }
 

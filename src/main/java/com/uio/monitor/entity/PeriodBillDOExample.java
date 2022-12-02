@@ -3,6 +3,7 @@ package com.uio.monitor.entity;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 public class PeriodBillDOExample {
@@ -104,6 +105,32 @@ public class PeriodBillDOExample {
                 throw new RuntimeException("Between values for " + property + " cannot be null");
             }
             criteria.add(new Criterion(condition, value1, value2));
+        }
+
+        protected void addCriterionForJDBCDate(String condition, Date value, String property) {
+            if (value == null) {
+                throw new RuntimeException("Value for " + property + " cannot be null");
+            }
+            addCriterion(condition, new java.sql.Date(value.getTime()), property);
+        }
+
+        protected void addCriterionForJDBCDate(String condition, List<Date> values, String property) {
+            if (values == null || values.size() == 0) {
+                throw new RuntimeException("Value list for " + property + " cannot be null or empty");
+            }
+            List<java.sql.Date> dateList = new ArrayList<java.sql.Date>();
+            Iterator<Date> iter = values.iterator();
+            while (iter.hasNext()) {
+                dateList.add(new java.sql.Date(iter.next().getTime()));
+            }
+            addCriterion(condition, dateList, property);
+        }
+
+        protected void addCriterionForJDBCDate(String condition, Date value1, Date value2, String property) {
+            if (value1 == null || value2 == null) {
+                throw new RuntimeException("Between values for " + property + " cannot be null");
+            }
+            addCriterion(condition, new java.sql.Date(value1.getTime()), new java.sql.Date(value2.getTime()), property);
         }
 
         public Criteria andIdIsNull() {
@@ -1006,63 +1033,63 @@ public class PeriodBillDOExample {
             return (Criteria) this;
         }
 
-        public Criteria andAddTimeIsNull() {
-            addCriterion("add_time is null");
+        public Criteria andNextAddTimeIsNull() {
+            addCriterion("next_add_time is null");
             return (Criteria) this;
         }
 
-        public Criteria andAddTimeIsNotNull() {
-            addCriterion("add_time is not null");
+        public Criteria andNextAddTimeIsNotNull() {
+            addCriterion("next_add_time is not null");
             return (Criteria) this;
         }
 
-        public Criteria andAddTimeEqualTo(Date value) {
-            addCriterion("add_time =", value, "addTime");
+        public Criteria andNextAddTimeEqualTo(Date value) {
+            addCriterionForJDBCDate("next_add_time =", value, "nextAddTime");
             return (Criteria) this;
         }
 
-        public Criteria andAddTimeNotEqualTo(Date value) {
-            addCriterion("add_time <>", value, "addTime");
+        public Criteria andNextAddTimeNotEqualTo(Date value) {
+            addCriterionForJDBCDate("next_add_time <>", value, "nextAddTime");
             return (Criteria) this;
         }
 
-        public Criteria andAddTimeGreaterThan(Date value) {
-            addCriterion("add_time >", value, "addTime");
+        public Criteria andNextAddTimeGreaterThan(Date value) {
+            addCriterionForJDBCDate("next_add_time >", value, "nextAddTime");
             return (Criteria) this;
         }
 
-        public Criteria andAddTimeGreaterThanOrEqualTo(Date value) {
-            addCriterion("add_time >=", value, "addTime");
+        public Criteria andNextAddTimeGreaterThanOrEqualTo(Date value) {
+            addCriterionForJDBCDate("next_add_time >=", value, "nextAddTime");
             return (Criteria) this;
         }
 
-        public Criteria andAddTimeLessThan(Date value) {
-            addCriterion("add_time <", value, "addTime");
+        public Criteria andNextAddTimeLessThan(Date value) {
+            addCriterionForJDBCDate("next_add_time <", value, "nextAddTime");
             return (Criteria) this;
         }
 
-        public Criteria andAddTimeLessThanOrEqualTo(Date value) {
-            addCriterion("add_time <=", value, "addTime");
+        public Criteria andNextAddTimeLessThanOrEqualTo(Date value) {
+            addCriterionForJDBCDate("next_add_time <=", value, "nextAddTime");
             return (Criteria) this;
         }
 
-        public Criteria andAddTimeIn(List<Date> values) {
-            addCriterion("add_time in", values, "addTime");
+        public Criteria andNextAddTimeIn(List<Date> values) {
+            addCriterionForJDBCDate("next_add_time in", values, "nextAddTime");
             return (Criteria) this;
         }
 
-        public Criteria andAddTimeNotIn(List<Date> values) {
-            addCriterion("add_time not in", values, "addTime");
+        public Criteria andNextAddTimeNotIn(List<Date> values) {
+            addCriterionForJDBCDate("next_add_time not in", values, "nextAddTime");
             return (Criteria) this;
         }
 
-        public Criteria andAddTimeBetween(Date value1, Date value2) {
-            addCriterion("add_time between", value1, value2, "addTime");
+        public Criteria andNextAddTimeBetween(Date value1, Date value2) {
+            addCriterionForJDBCDate("next_add_time between", value1, value2, "nextAddTime");
             return (Criteria) this;
         }
 
-        public Criteria andAddTimeNotBetween(Date value1, Date value2) {
-            addCriterion("add_time not between", value1, value2, "addTime");
+        public Criteria andNextAddTimeNotBetween(Date value1, Date value2) {
+            addCriterionForJDBCDate("next_add_time not between", value1, value2, "nextAddTime");
             return (Criteria) this;
         }
     }

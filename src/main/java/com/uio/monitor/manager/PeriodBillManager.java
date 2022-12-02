@@ -6,6 +6,7 @@ import com.uio.monitor.mapper.PeriodBillDOMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -25,7 +26,6 @@ public class PeriodBillManager {
         periodBillDO.setGmtModify(new Date());
         periodBillDO.setGmtCreate(new Date());
         periodBillDO.setDeleted(false);
-        periodBillDO.setAddTime(new Date());
         periodBillDOMapper.insert(periodBillDO);
     }
 
@@ -42,16 +42,11 @@ public class PeriodBillManager {
      * @return
      */
     public List<PeriodBillDO> queryExpirePeriodBill() {
-        Calendar cal = Calendar.getInstance();
-        int curDay = cal.get(Calendar.DAY_OF_MONTH);
-        cal.set(Calendar.MONTH, cal.get(Calendar.DAY_OF_MONTH) - 1);
         PeriodBillDOExample example = new PeriodBillDOExample();
         PeriodBillDOExample.Criteria criteria = example.createCriteria();
         criteria.andDeletedEqualTo(false);
-        criteria.andGenerateDayLessThanOrEqualTo(curDay);
         criteria.andGenerateCountGreaterThan(0);
-        // 表示距上次添加时间已经过去一个月了
-        criteria.andAddTimeLessThanOrEqualTo(cal.getTime());
+        criteria.andNextAddTimeLessThan(new Date());
         return periodBillDOMapper.selectByExample(example);
     }
 
@@ -64,18 +59,22 @@ public class PeriodBillManager {
         return periodBillDOMapper.selectByExample(example);
     }
 
-    public int updateGenerateCount(Integer oldCount, Long id, Long userId) {
+    public int updateGenerateCountAndGenerateNextDate(Integer oldCount, Long id, Long userId, Date curNextGenerateDate) {
         PeriodBillDOExample example = new PeriodBillDOExample();
         PeriodBillDOExample.Criteria criteria = example.createCriteria();
         criteria.andDeletedEqualTo(false);
         criteria.andIdEqualTo(id);
         criteria.andGenerateCountEqualTo(oldCount);
 
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(curNextGenerateDate);
+        calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) + 1);
+
         PeriodBillDO periodBillDO = new PeriodBillDO();
         periodBillDO.setGmtModify(new Date());
         periodBillDO.setModifier(userId.toString());
         periodBillDO.setGenerateCount(--oldCount);
-        periodBillDO.setAddTime(new Date());
+        periodBillDO.setNextAddTime(calendar.getTime());
 
         return periodBillDOMapper.updateByExampleSelective(periodBillDO, example);
     }

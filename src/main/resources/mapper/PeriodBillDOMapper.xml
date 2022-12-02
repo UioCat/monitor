@@ -16,7 +16,7 @@
     <result column="amount" jdbcType="DECIMAL" property="amount" />
     <result column="description" jdbcType="VARCHAR" property="description" />
     <result column="category" jdbcType="VARCHAR" property="category" />
-    <result column="add_time" jdbcType="TIMESTAMP" property="addTime" />
+    <result column="next_add_time" jdbcType="DATE" property="nextAddTime" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -78,7 +78,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, user_id, gmt_create, gmt_modify, creator, modifier, deleted, generate_day, generate_count, 
-    bill_type, produce_way, amount, description, category, add_time
+    bill_type, produce_way, amount, description, category, next_add_time
   </sql>
   <select id="selectByExample" parameterType="com.uio.monitor.entity.PeriodBillDOExample" resultMap="BaseResultMap">
     select
@@ -115,13 +115,13 @@
       gmt_modify, creator, modifier, 
       deleted, generate_day, generate_count, 
       bill_type, produce_way, amount, 
-      description, category, add_time
+      description, category, next_add_time
       )
     values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{gmtCreate,jdbcType=TIMESTAMP}, 
       #{gmtModify,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, #{modifier,jdbcType=VARCHAR}, 
       #{deleted,jdbcType=BIT}, #{generateDay,jdbcType=INTEGER}, #{generateCount,jdbcType=INTEGER}, 
       #{billType,jdbcType=VARCHAR}, #{produceWay,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}, 
-      #{description,jdbcType=VARCHAR}, #{category,jdbcType=VARCHAR}, #{addTime,jdbcType=TIMESTAMP}
+      #{description,jdbcType=VARCHAR}, #{category,jdbcType=VARCHAR}, #{nextAddTime,jdbcType=DATE}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.uio.monitor.entity.PeriodBillDO">
@@ -169,8 +169,8 @@
       <if test="category != null">
         category,
       </if>
-      <if test="addTime != null">
-        add_time,
+      <if test="nextAddTime != null">
+        next_add_time,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -216,8 +216,8 @@
       <if test="category != null">
         #{category,jdbcType=VARCHAR},
       </if>
-      <if test="addTime != null">
-        #{addTime,jdbcType=TIMESTAMP},
+      <if test="nextAddTime != null">
+        #{nextAddTime,jdbcType=DATE},
       </if>
     </trim>
   </insert>
@@ -272,8 +272,8 @@
       <if test="record.category != null">
         category = #{record.category,jdbcType=VARCHAR},
       </if>
-      <if test="record.addTime != null">
-        add_time = #{record.addTime,jdbcType=TIMESTAMP},
+      <if test="record.nextAddTime != null">
+        next_add_time = #{record.nextAddTime,jdbcType=DATE},
       </if>
     </set>
     <if test="_parameter != null">
@@ -296,7 +296,7 @@
       amount = #{record.amount,jdbcType=DECIMAL},
       description = #{record.description,jdbcType=VARCHAR},
       category = #{record.category,jdbcType=VARCHAR},
-      add_time = #{record.addTime,jdbcType=TIMESTAMP}
+      next_add_time = #{record.nextAddTime,jdbcType=DATE}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -343,8 +343,8 @@
       <if test="category != null">
         category = #{category,jdbcType=VARCHAR},
       </if>
-      <if test="addTime != null">
-        add_time = #{addTime,jdbcType=TIMESTAMP},
+      <if test="nextAddTime != null">
+        next_add_time = #{nextAddTime,jdbcType=DATE},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
@@ -364,7 +364,7 @@
       amount = #{amount,jdbcType=DECIMAL},
       description = #{description,jdbcType=VARCHAR},
       category = #{category,jdbcType=VARCHAR},
-      add_time = #{addTime,jdbcType=TIMESTAMP}
+      next_add_time = #{nextAddTime,jdbcType=DATE}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

@@ -32,7 +32,7 @@ public class PeriodBillDO {
 
     private String category;
 
-    private Date addTime;
+    private Date nextAddTime;
 
     public Long getId() {
         return id;
@@ -146,11 +146,11 @@ public class PeriodBillDO {
         this.category = category;
     }
 
-    public Date getAddTime() {
-        return addTime;
+    public Date getNextAddTime() {
+        return nextAddTime;
     }
 
-    public void setAddTime(Date addTime) {
-        this.addTime = addTime;
+    public void setNextAddTime(Date nextAddTime) {
+        this.nextAddTime = nextAddTime;
     }
 }
