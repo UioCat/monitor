@@ -340,7 +340,7 @@ public class BillService {
         periodBillDO.setProduceWay(billProduceWayTypeEnum == null ? null : billProduceWayTypeEnum.name());
         periodBillDO.setAmount(new BigDecimal(String.valueOf(addPeriodBillReq.getAmount())));
         periodBillDO.setDescription(addPeriodBillReq.getDesc());
-        periodBillDO.setCategory(addPeriodBillReq.getBillType());
+        periodBillDO.setCategory(addPeriodBillReq.getType());
         periodBillDO.setNextAddTime(cale.getTime());
         return periodBillDO;
     }

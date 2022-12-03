@@ -40,7 +40,7 @@ public class PeriodBillTimer {
     /**
      * 一分钟
      */
-    private final Long PERIOD_BILL_LOCK_TIME =  1000 * 60L;
+    private static final Long PERIOD_BILL_LOCK_TIME =  1000 * 60L;
 
     @Scheduled(cron = MonitorConstant.SCAN_PERIOD_BILL_CRON)
     public void autoGenerateBillTimer() {
