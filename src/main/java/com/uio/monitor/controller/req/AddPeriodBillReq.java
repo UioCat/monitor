@@ -11,8 +11,14 @@ import javax.validation.constraints.NotNull;
  */
 @Data
 public class AddPeriodBillReq {
+    /**
+     * 产生日期 支持 1-28
+     */
     @NotNull
     private Integer generateDay;
+    /**
+     * 产生次数（即产生 generateCount 个月）
+     */
     @NotNull
     private Integer generateCount;
     /**

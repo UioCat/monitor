@@ -12,6 +12,9 @@ import javax.validation.constraints.NotNull;
 @Data
 public class AddBillReq {
 
+    /**
+     * 产生时间
+     */
     @NotNull
     private String productTime;
     /**

@@ -103,6 +103,9 @@ public class BillService {
 
     private PeriodBillDTO convertPeriodBillDTO(PeriodBillDO periodBillDO) {
         PeriodBillDTO periodBillDTO = new PeriodBillDTO();
+        periodBillDTO.setBillType(periodBillDO.getBillType());
+        periodBillDTO.setProduceWayType(BillProduceWayTypeEnum.getByName(periodBillDO.getProduceWay()) == null ?
+                "" : BillProduceWayTypeEnum.getByName(periodBillDO.getProduceWay()).getDesc());
         periodBillDTO.setGenerateDay(periodBillDO.getGenerateDay());
         periodBillDTO.setGenerateCount(periodBillDO.getGenerateCount());
         periodBillDTO.setAmount(periodBillDO.getAmount().toString());
@@ -182,7 +185,7 @@ public class BillService {
     public List<String> getConsumptionTypeService(Long userId, String amount, String desc) {
         List<String> resultList = new ArrayList<>();
 
-        // 从配置文件查询类型
+        // 从配置文件查询类型 - 金额范围是否对应上，对应上则返回对应配置的类型
         List<BillConfigDTO> billConfigDTOS = configManager.getBillConfig(userId);
         Optional.ofNullable(billConfigDTOS).orElse(Collections.emptyList()).forEach(item -> {
             String[] priceScopes = item.getPriceScope().split("-");
@@ -199,7 +202,7 @@ public class BillService {
             }
         });
 
-        // 从历史提交记录查询对应类型
+        // 从历史提交记录查询对应类型 - 查相同金额且相同描述的账单 没有则查金额相同或描述相同的账单
         List<BillDO> billDOS = billManager.queryByDescAndAmount(userId, new BigDecimal(amount), desc);
         if (CollectionUtils.isEmpty(billDOS)) {
             billDOS = billManager.queryByDescAndAmount(userId, null, desc);
@@ -219,10 +222,18 @@ public class BillService {
             }
             resultList.add(0, result);
         }
-
-        return resultList;
+        // 去重返回
+        return resultList.stream().distinct().collect(Collectors.toList());
     }
 
+    /**
+     * 账单统计
+     * @param userId
+     * @param startDate
+     * @param endDate
+     * @param largeItem
+     * @return
+     */
     public List<BillStatisticsDTO> getBillStatistics(Long userId, Date startDate, Date endDate, Boolean largeItem) {
         List<BillStatisticsDTO> res = new ArrayList<>();
         List<BillDO> billDOList = billManager.queryByDate(userId, startDate, endDate);

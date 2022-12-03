@@ -49,6 +49,11 @@ public class BillController extends BaseController {
     @Autowired
     private BillManager billManager;
 
+    /**
+     * 添加一笔账单 - 收入/支出都支持
+     * @param addBillReq
+     * @return
+     */
     @PostMapping("/addBill")
     public BackMessage<Boolean> addBill(@RequestBody @Valid AddBillReq addBillReq) {
         BillTypeEnum billType = BillTypeEnum.getByName(addBillReq.getBillType());
@@ -59,6 +64,11 @@ public class BillController extends BaseController {
         return BackMessage.success(res);
     }
 
+    /**
+     * 添加一笔周期性账单 - 收入/支出都支持
+     * @param addPeriodBillReq
+     * @return
+     */
     @PostMapping("/addPeriodBill")
     public BackMessage<Void> addPeriodBill(@RequestBody @Valid AddPeriodBillReq addPeriodBillReq) {
         Long userId = super.getUserId();
@@ -66,6 +76,10 @@ public class BillController extends BaseController {
         return BackMessage.success();
     }
 
+    /**
+     * 查询周期性账单列表
+     * @return
+     */
     @GetMapping("/queryPeriodBillList")
     BackMessage<List<PeriodBillDTO>> queryPeriodBillList() {
         Long userId = super.getUserId();
@@ -171,6 +185,7 @@ public class BillController extends BaseController {
 
     /**
      * 获取账单统计数据
+     * todo 支持收入统计
      * @return
      */
     @GetMapping("/getStatistics")

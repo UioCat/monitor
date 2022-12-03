@@ -7,7 +7,13 @@ package com.uio.monitor.common;
  */
 public enum BillTypeEnum {
 
+    /**
+     * 支出
+     */
     CONSUME,
+    /**
+     * 收入
+     */
     INCOME,
     ;
 
