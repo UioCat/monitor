@@ -2,6 +2,8 @@ package com.uio.monitor.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.uio.monitor.common.BackEnum;
+import com.uio.monitor.common.CustomException;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.apache.commons.lang3.StringUtils;
@@ -32,14 +34,20 @@ public class TuyaIotService {
     // 开发者accessId
     @Value("${config.tuyaAccessId}")
     private String tuyaAccessId;
+
     // 开发者accessKey
     @Value("${config.tuyaAccessKey}")
     private String tuyaAccessKey;
+
     // Tuya云endpoint
     @Value("${config.tuyaEndpoint}")
     private String tuyaEndpoint;
+
     @Value("${config.tuyaDeviceId}")
     private String deviceId;
+
+    @Value("${config.tokenPath}")
+    private String tokenPath;
 
     private static final String powerOff = "{\"commands\":[{\"code\":\"PowerOff\",\"value\":\"PowerOff\"}]}";
     private static final String powerOn = "{\"commands\":[{\"code\":\"PowerOn\",\"value\":\"PowerOn\"}]}";
@@ -54,19 +62,22 @@ public class TuyaIotService {
 
     private void powerControll(String powerOn) {
         // todo 优化结构和日志
-        String getTokenPath = "/v1.0/token?grant_type=1";
-        Object result = this.execute(getTokenPath, "GET", "", new HashMap<>());
-        System.out.println(JSON.toJSONString(result));
-        JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(result));
-        String success = jsonObject.get("success").toString();
+        Object result = this.getToken(tokenPath, "GET", "", new HashMap<>());
+        log.info("get token success, result: {}", JSON.toJSONString(result));
 
-        JSONObject resultObject = JSONObject.parseObject(jsonObject.get("result").toString());
-        String accessToken = resultObject.get("access_token").toString();
-        System.out.println(accessToken);
+        String accessToken = "";
+        try {
+            JSONObject tokenRepJson = JSONObject.parseObject(JSON.toJSONString(result));
+            JSONObject tokenResultJson = JSONObject.parseObject(tokenRepJson.get("result").toString());
+            accessToken = tokenResultJson.get("access_token").toString();
+        } catch (Exception e){
+            log.error("error parsing json data!", e);
+            throw new CustomException(BackEnum.UNKNOWN_ERROR);
+        }
 
         String commandPath = "/v1.0/devices/" + deviceId + "/commands";
         result = this.execute(accessToken, commandPath, "POST", powerOn, new HashMap<>());
-        System.out.println(JSON.toJSONString(result));
+        log.info("powerControll send success, result: {}", JSON.toJSONString(result));
     }
 
     private static final MediaType CONTENT_TYPE = MediaType.parse("application/json");
@@ -77,7 +88,7 @@ public class TuyaIotService {
     /**
      * 用于获取令牌、刷新令牌：无Token请求
      */
-    public Object execute(String path, String method, String body, Map<String, String> customHeaders) {
+    public Object getToken(String path, String method, String body, Map<String, String> customHeaders) {
         return this.execute("", path, method, body, customHeaders);
     }
 
@@ -86,21 +97,10 @@ public class TuyaIotService {
      */
     public Object execute(String accessToken, String path, String method, String body, Map<String, String> customHeaders) {
         try {
-
             String url = tuyaEndpoint + path;
 
             Request.Builder request;
-            if ("GET".equals(method)) {
-                request = getRequest(url);
-            } else if ("POST".equals(method)) {
-                request = postRequest(url, body);
-            } else if ("PUT".equals(method)) {
-                request = putRequest(url, body);
-            } else if ("DELETE".equals(method)) {
-                request = deleteRequest(url, body);
-            } else {
-                throw new TuyaCloudSDKException("Method only support GET, POST, PUT, DELETE");
-            }
+            request = createRequest(url, body, method);
             if (customHeaders.isEmpty()) {
                 customHeaders = new HashMap<>();
             }
@@ -229,61 +229,24 @@ public class TuyaIotService {
     }
 
     /**
-     * 处理get请求
+     * 创建请求
      */
-    public static Request.Builder getRequest(String url) {
+    public static Request.Builder createRequest(String url, String body, String method) {
         Request.Builder request;
         try {
             request = new Request.Builder()
-                    .url(url)
-                    .get();
-        } catch (IllegalArgumentException e) {
-            throw new TuyaCloudSDKException(e.getMessage());
-        }
-        return request;
-    }
-
-    /**
-     * 处理post请求
-     */
-    public static Request.Builder postRequest(String url, String body) {
-        Request.Builder request;
-        try {
-            request = new Request.Builder()
-                    .url(url)
-                    .post(RequestBody.create(CONTENT_TYPE, body));
-        } catch (IllegalArgumentException e) {
-            throw new TuyaCloudSDKException(e.getMessage());
-        }
-
-        return request;
-    }
-
-    /**
-     * 处理put请求
-     */
-    public static Request.Builder putRequest(String url, String body) {
-        Request.Builder request;
-        try {
-            request = new Request.Builder()
-                    .url(url)
-                    .put(RequestBody.create(CONTENT_TYPE, body));
-        } catch (IllegalArgumentException e) {
-            throw new TuyaCloudSDKException(e.getMessage());
-        }
-        return request;
-    }
-
-
-    /**
-     * 处理delete请求
-     */
-    public static Request.Builder deleteRequest(String url, String body) {
-        Request.Builder request;
-        try {
-            request = new Request.Builder()
-                    .url(url)
-                    .delete(RequestBody.create(CONTENT_TYPE, body));
+                    .url(url);
+            if ("GET".equals(method)) {
+                request = request.get();
+            } else if ("POST".equals(method)) {
+                request = request.post(RequestBody.create(CONTENT_TYPE, body));
+            } else if ("PUT".equals(method)) {
+                request = request.put(RequestBody.create(CONTENT_TYPE, body));
+            } else if ("DELETE".equals(method)) {
+                request = request.delete(RequestBody.create(CONTENT_TYPE, body));
+            } else {
+                throw new TuyaCloudSDKException("Method only support GET, POST, PUT, DELETE");
+            }
         } catch (IllegalArgumentException e) {
             throw new TuyaCloudSDKException(e.getMessage());
         }
