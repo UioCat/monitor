@@ -34,6 +34,7 @@ public class PeriodBillManager {
         PeriodBillDOExample.Criteria criteria = example.createCriteria();
         criteria.andDeletedEqualTo(false);
         criteria.andUserIdEqualTo(userId);
+        criteria.andGenerateCountGreaterThan(0);
         return periodBillDOMapper.selectByExample(example);
     }
 
@@ -54,7 +55,7 @@ public class PeriodBillManager {
         PeriodBillDOExample example = new PeriodBillDOExample();
         PeriodBillDOExample.Criteria criteria = example.createCriteria();
         criteria.andDeletedEqualTo(false);
-        criteria.andGenerateCountGreaterThan(0);
+        criteria.andGenerateCountEqualTo(0);
         criteria.andUserIdEqualTo(userId);
         return periodBillDOMapper.selectByExample(example);
     }

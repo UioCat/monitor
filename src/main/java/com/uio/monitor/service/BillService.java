@@ -96,7 +96,7 @@ public class BillService {
     }
 
     public List<PeriodBillDTO> getPeriodBillListByUserId(Long userId) {
-        List<PeriodBillDO> periodBillDOS = periodBillManager.queryDisablePeriodBillByUserId(userId);
+        List<PeriodBillDO> periodBillDOS = periodBillManager.queryPeriodBillListByUserId(userId);
         return CollectionUtils.isEmpty(periodBillDOS) ? new ArrayList<>(0) : periodBillDOS.stream()
                 .map(this::convertPeriodBillDTO).collect(Collectors.toList());
     }
