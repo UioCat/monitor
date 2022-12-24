@@ -73,8 +73,10 @@ public class BillManager {
         if (largeItem != null) {
             criteria.andLargeItemEqualTo(largeItem);
         }
+        if (!StringUtils.isEmpty(billType)) {
+            criteria.andBillTypeEqualTo(billType);
+        }
         criteria.andUserIdEqualTo(userId);
-        criteria.andBillTypeEqualTo(billType);
         criteria.andDeletedEqualTo(false);
         example.setOrderByClause("gmt_create desc");
         return billDOMapper.selectByExample(example);
@@ -98,9 +100,11 @@ public class BillManager {
         if (startTime != null && endTime != null) {
             criteria.andProduceTimeBetween(startTime, endTime);
         }
+        if (!StringUtils.isEmpty(billType)) {
+            criteria.andBillTypeEqualTo(billType);
+        }
         criteria.andDeletedEqualTo(false);
         criteria.andUserIdEqualTo(userId);
-        criteria.andBillTypeEqualTo(billType);
         return billDOMapper.countByExample(example);
     }
 
@@ -145,12 +149,15 @@ public class BillManager {
      * @param endDate
      * @return
      */
-    public List<BillDO> queryByDate(Long userId, Date startDate, Date endDate) {
+    public List<BillDO> queryByDate(Long userId, Date startDate, Date endDate, String billType) {
         BillDOExample example = new BillDOExample();
         BillDOExample.Criteria criteria = example.createCriteria();
         criteria.andUserIdEqualTo(userId);
         if (startDate != null || endDate != null) {
             criteria.andProduceTimeBetween(startDate, endDate);
+        }
+        if (!StringUtils.isEmpty(billType)) {
+            criteria.andBillTypeEqualTo(billType);
         }
         criteria.andDeletedEqualTo(false);
         example.setOrderByClause("produce_time ASC");

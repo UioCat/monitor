@@ -11,6 +11,7 @@ public enum BillProduceWayTypeEnum {
     WECHAT("微信"),
     BANK_CARD("银行卡"),
     CASH("现金"),
+    CREDIT_CARD("信用卡"),
     ;
 
     private String desc;

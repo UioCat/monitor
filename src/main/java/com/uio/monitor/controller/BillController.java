@@ -2,12 +2,9 @@ package com.uio.monitor.controller;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.read.listener.PageReadListener;
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
-import com.uio.monitor.common.BackEnum;
-import com.uio.monitor.common.BackMessage;
-import com.uio.monitor.common.BillTypeEnum;
-import com.uio.monitor.common.CustomException;
+import com.uio.monitor.common.*;
 import com.uio.monitor.controller.base.BaseController;
 import com.uio.monitor.controller.req.AddBillReq;
 import com.uio.monitor.controller.req.AddPeriodBillReq;
@@ -49,6 +46,24 @@ public class BillController extends BaseController {
     @Autowired
     private BillManager billManager;
 
+
+    /**
+     * 获得账单类型
+     * @return
+     */
+    @GetMapping("/getBillProduceWayType")
+    public BackMessage<List<JSONObject>> getBillProduceWayType() {
+        Long userId = super.getUserId();
+        List<JSONObject> res = new ArrayList<>();
+        for (BillProduceWayTypeEnum billProduceWayTypeEnum : BillProduceWayTypeEnum.values()) {
+            JSONObject item = new JSONObject();
+            item.put("value", billProduceWayTypeEnum.name());
+            item.put("name", billProduceWayTypeEnum.getDesc());
+        }
+        return BackMessage.success(res);
+    }
+
+
     /**
      * 添加一笔账单 - 收入/支出都支持
      * @param addBillReq
@@ -77,7 +92,7 @@ public class BillController extends BaseController {
     }
 
     /**
-     * 查询周期性账单列表
+     * 查询周期性账单列表 - 收入/支出都支持
      * @return
      */
     @GetMapping("/queryPeriodBillList")
@@ -152,7 +167,7 @@ public class BillController extends BaseController {
     }
 
     /**
-     * 获取账单列表
+     * 获取账单列表 - 收入/支出都支持
      * @param largeItem 空的时候不筛选
      */
     @GetMapping("/getBillList")
@@ -184,17 +199,17 @@ public class BillController extends BaseController {
     }
 
     /**
-     * 获取账单统计数据
-     * todo 支持收入统计
+     * 获取账单统计数据 - 收入/支出都支持
      * @return
      */
     @GetMapping("/getStatistics")
     public BackMessage<List<BillStatisticsDTO>> getStatistics(
         @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(value = "startDate", required = false) Date startDate,
         @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(value = "endDate", required = false) Date endDate,
-        @RequestParam(value = "largeItem", required = false) Boolean largeItem) {
+        @RequestParam(value = "largeItem", required = false) Boolean largeItem,
+        @RequestParam(value = "type", required = true) String type) {
         List<BillStatisticsDTO> billStatistics = billService.getBillStatistics(super.getUserId(), startDate, endDate,
-                largeItem);
+                largeItem, type);
         return BackMessage.success(billStatistics);
     }
 

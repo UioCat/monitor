@@ -57,6 +57,7 @@ public class BillService {
 
     /**
      * 插入一条账单记录
+     *
      * @param addBillReq
      * @param userId
      * @return
@@ -116,6 +117,7 @@ public class BillService {
 
     /**
      * 获得账单列表 分页查询
+     *
      * @param pageNum
      * @param pageSize
      * @param userId
@@ -125,8 +127,8 @@ public class BillService {
      * @return
      */
     public PageInfo<BillDTO> getBillList(Integer pageNum, Integer pageSize, Long userId, String category,
-        Date startTime, Date endTime, Boolean largeItem,
-        String billType) {
+                                         Date startTime, Date endTime, Boolean largeItem,
+                                         String billType) {
         PageInfo<BillDTO> res = new PageInfo<>();
         res.setPageNum(pageSize);
         res.setPageSize(pageNum);
@@ -156,7 +158,7 @@ public class BillService {
 //            BillProduceWayTypeEnum.getByName(updateBillReq.getProduceWayType())
             if (BillTypeEnum.getByName(updateBillReq.getBillType()) == null) {
                 log.warn("BillTypeEnum or BillProduceWayTypeEnum param error, billType:{}, produceWayType:{}",
-                    updateBillReq.getBillType(), updateBillReq.getProduceWayType());
+                        updateBillReq.getBillType(), updateBillReq.getProduceWayType());
                 throw new CustomException(BackEnum.PARAM_ERROR);
             }
             // 更新数据
@@ -178,6 +180,7 @@ public class BillService {
 
     /**
      * 根据配置文件获得金额对应的类型
+     *
      * @param userId
      * @param amount
      * @return
@@ -228,15 +231,17 @@ public class BillService {
 
     /**
      * 账单统计
+     *
      * @param userId
      * @param startDate
      * @param endDate
      * @param largeItem
      * @return
      */
-    public List<BillStatisticsDTO> getBillStatistics(Long userId, Date startDate, Date endDate, Boolean largeItem) {
+    public List<BillStatisticsDTO> getBillStatistics(Long userId, Date startDate, Date endDate, Boolean largeItem,
+                                                     String billType) {
         List<BillStatisticsDTO> res = new ArrayList<>();
-        List<BillDO> billDOList = billManager.queryByDate(userId, startDate, endDate);
+        List<BillDO> billDOList = billManager.queryByDate(userId, startDate, endDate, billType);
         if (CollectionUtils.isEmpty(billDOList)) {
             // billDOList 空数据处理
             return Collections.emptyList();
