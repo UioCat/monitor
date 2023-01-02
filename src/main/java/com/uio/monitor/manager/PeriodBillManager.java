@@ -47,7 +47,7 @@ public class PeriodBillManager {
         PeriodBillDOExample.Criteria criteria = example.createCriteria();
         criteria.andDeletedEqualTo(false);
         criteria.andGenerateCountGreaterThan(0);
-        criteria.andNextAddTimeLessThan(new Date());
+        criteria.andNextAddTimeLessThanOrEqualTo(new Date());
         return periodBillDOMapper.selectByExample(example);
     }
 

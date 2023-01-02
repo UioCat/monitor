@@ -3,12 +3,16 @@ package com.uio.monitor;
 import com.alibaba.fastjson.JSON;
 import com.uio.monitor.controller.resp.BillConfigDTO;
 import com.uio.monitor.entity.BillDO;
+import com.uio.monitor.entity.PeriodBillDO;
 import com.uio.monitor.manager.BillManager;
 import com.uio.monitor.manager.ConfigManager;
+import com.uio.monitor.manager.PeriodBillManager;
 import com.uio.monitor.service.BillService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.Assert;
 
 import java.lang.reflect.Field;
@@ -21,10 +25,12 @@ import java.util.List;
  * @date 2022-03-23 14:44
  */
 @Slf4j
+@SpringBootTest
 public class BillServiceTest {
 
     private BillService billService = new BillService();
-
+    @Autowired
+    private PeriodBillManager periodBillManager;
 
     @Test
     public void getConsumptionTypeService() {
@@ -54,6 +60,12 @@ public class BillServiceTest {
         log.info("resultList:{}", JSON.toJSONString(resultList));
         Assert.isTrue(JSON.toJSONString(resultList).equals("[\"种类3-测试描述数量2\",\"种类30-40\",\"种类35-50\"]"),
             "DB数据以及配置数据测试case失败");
+    }
+
+    @Test
+    public void queryExpirePeriodBillTest() {
+        List<PeriodBillDO> periodBillDOS = periodBillManager.queryExpirePeriodBill();
+        log.info("result:{}", JSON.toJSONString(periodBillDOS));
     }
 
     /**
