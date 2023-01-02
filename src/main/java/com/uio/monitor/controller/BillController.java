@@ -21,6 +21,7 @@ import com.uio.monitor.vo.BillExcelDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -207,7 +208,10 @@ public class BillController extends BaseController {
         @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(value = "startDate", required = false) Date startDate,
         @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(value = "endDate", required = false) Date endDate,
         @RequestParam(value = "largeItem", required = false) Boolean largeItem,
-        @RequestParam(value = "type", required = true) String type) {
+        @RequestParam(value = "type", required = false) String type) {
+        if (StringUtils.isEmpty(type)) {
+            type = BillTypeEnum.CONSUME.name();
+        }
         List<BillStatisticsDTO> billStatistics = billService.getBillStatistics(super.getUserId(), startDate, endDate,
                 largeItem, type);
         return BackMessage.success(billStatistics);
