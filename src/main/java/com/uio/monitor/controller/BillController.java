@@ -208,12 +208,13 @@ public class BillController extends BaseController {
         @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(value = "startDate", required = false) Date startDate,
         @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(value = "endDate", required = false) Date endDate,
         @RequestParam(value = "largeItem", required = false) Boolean largeItem,
+        @RequestParam(value = "periodBill", required = false) Boolean periodBill,
         @RequestParam(value = "type", required = false) String type) {
         if (StringUtils.isEmpty(type)) {
             type = BillTypeEnum.CONSUME.name();
         }
         List<BillStatisticsDTO> billStatistics = billService.getBillStatistics(super.getUserId(), startDate, endDate,
-                largeItem, type);
+                largeItem, periodBill, type);
         return BackMessage.success(billStatistics);
     }
 

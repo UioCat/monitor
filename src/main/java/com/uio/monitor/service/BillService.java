@@ -239,7 +239,7 @@ public class BillService {
      * @return
      */
     public List<BillStatisticsDTO> getBillStatistics(Long userId, Date startDate, Date endDate, Boolean largeItem,
-                                                     String billType) {
+                                                     Boolean periodBill, String billType) {
         List<BillStatisticsDTO> res = new ArrayList<>();
         List<BillDO> billDOList = billManager.queryByDate(userId, startDate, endDate, billType);
         if (CollectionUtils.isEmpty(billDOList)) {
@@ -278,7 +278,20 @@ public class BillService {
                     Utils.getApartMonths(earliestTime, latestTime) + 1,
                     Utils.getApartDays(earliestTime, latestTime) + 1);
             return res;
-        } else {
+        } else if (Boolean.TRUE.equals(periodBill)) {
+            // 根据月份查
+            List<PeriodBillDO> periodBillDOS = periodBillManager.queryPeriodBillListByUserId(userId);
+            Map<String, List<PeriodBillDO>> periodBillMapByCategory = periodBillDOS.stream().collect(Collectors.groupingBy(PeriodBillDO::getCategory));
+            periodBillMapByCategory.forEach((category, periodBillDOList) -> {
+                BigDecimal amountByCategory = periodBillDOList.stream().map(PeriodBillDO::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+                BillStatisticsDTO billStatisticsDTO = new BillStatisticsDTO();
+                billStatisticsDTO.setCategory(category);
+                billStatisticsDTO.setAmount(amountByCategory);
+                res.add(billStatisticsDTO);
+            });
+            return res;
+        }
+        else {
             Map<String, List<BillDO>> billGroupByCategoryMap = Optional.of(billDOList).orElse(
                     new ArrayList<>(0)).stream().collect(Collectors.groupingBy(BillDO::getCategory));
             Set<Map.Entry<String, List<BillDO>>> entries = billGroupByCategoryMap.entrySet();
