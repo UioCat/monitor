@@ -2,6 +2,7 @@ package com.uio.monitor.controller;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import com.uio.monitor.common.BackMessage;
 import com.uio.monitor.common.CacheService;
@@ -93,11 +94,12 @@ public class HomeController extends BaseController {
     public BackMessage<Void> unlocking(@RequestParam String secretKey) {
         super.verifyKey(secretKey);
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        // 由于苹果快捷指令触发URL会重复触发两次，所以设置30s内幂等
-        emailService.sendQuietMessage("406453373@qq.com", "门锁打开通知",
-                "门锁已经打开，时间：" + df.format(System.currentTimeMillis()), 30L);
-        emailService.sendQuietMessage("478633420@qq.com", "门锁打开通知",
-                "门锁已经打开，时间：" + df.format(System.currentTimeMillis()), 30L);
+        List<String> sendMailList = configManager.getSendMailList();
+        for (String mailAddress : sendMailList) {
+            // 由于苹果快捷指令触发URL会重复触发两次，所以设置30s内幂等
+            emailService.sendQuietMessage(mailAddress, "门锁打开通知",
+                    "门锁已经打开，时间：" + df.format(System.currentTimeMillis()), 30L);
+        }
         return BackMessage.success();
     }
 

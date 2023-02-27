@@ -50,9 +50,24 @@ public class ConfigManager {
      * iphone12 mini Wi-Fi 固定IP
      */
     private static final String IPHONE_HOME_IP = "IPHONE_HOME_IP";
+    /**
+     * 需要发送的邮箱列表
+     */
+    private static final String SEND_MAIL_LIST = "SEND_MAIL_LIST";
+
+    public List<String> getSendMailList() {
+        ConfigDOExample example = new ConfigDOExample();
+        ConfigDOExample.Criteria criteria = example.createCriteria();
+        criteria.andConfigKeyEqualTo(SEND_MAIL_LIST);
+        criteria.andDeletedEqualTo(false);
+
+        ConfigDO configDO = configDOMapper.selectByExampleWithBLOBs(example).stream().findFirst().orElse(null);
+        return configDO == null ? new ArrayList<>(0) : JSON.parseArray(configDO.getConfigValue(), String.class);
+    }
 
     /**
      * iphone12 mini 家庭固定IP
+     *
      * @return
      */
     public String getIPhoneHomeIp() {
@@ -66,6 +81,7 @@ public class ConfigManager {
 
     /**
      * 新增一个带监测的服务器数据
+     *
      * @param serverMessage
      */
     public void addServer(ServerMessage serverMessage) {
@@ -96,6 +112,7 @@ public class ConfigManager {
 
     /**
      * 获取服务器信息列表
+     *
      * @return
      */
     public List<ServerMessage> getServerList() {
@@ -112,6 +129,7 @@ public class ConfigManager {
 
     /**
      * 获取本地服务器信息列表
+     *
      * @return
      */
     public List<ServerMessage> getLocalServerList() {
@@ -128,6 +146,7 @@ public class ConfigManager {
 
     /**
      * 获得用户Bill配置
+     *
      * @param userId
      * @return
      */
@@ -152,6 +171,7 @@ public class ConfigManager {
 
     /**
      * 删除账单配置数据
+     *
      * @param userId
      * @param configId
      */
@@ -170,6 +190,7 @@ public class ConfigManager {
 
     /**
      * 插入/更新 用户账单配置
+     *
      * @param userId
      * @param billConfigDTO
      */
@@ -219,7 +240,7 @@ public class ConfigManager {
         criteria.andDeletedEqualTo(false);
         List<ConfigDO> configDOList = configDOMapper.selectByExampleWithBLOBs(example);
         ConfigDO configDO = new ConfigDO();
-        if (CollectionUtils.isEmpty(configDOList) ) {
+        if (CollectionUtils.isEmpty(configDOList)) {
             // 插入
             configDO.setGmtCreate(new Date());
             configDO.setGmtModify(new Date());
@@ -230,7 +251,8 @@ public class ConfigManager {
             configDO.setConfigValue("0");
             configDOMapper.insert(configDO);
             return "0";
-        } {
+        }
+        {
             ConfigDO configDOInDb = configDOList.get(0);
             // 更新
             configDO.setId(configDOInDb.getId());
