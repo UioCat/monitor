@@ -279,6 +279,7 @@ public class BillService {
                     Utils.getApartDays(earliestTime, latestTime) + 1);
             return res;
         } else if (Boolean.TRUE.equals(periodBill)) {
+            // 支持 纬度进行查询，年/月/周/日
             // 根据月份查
             List<PeriodBillDO> periodBillDOS = periodBillManager.queryPeriodBillListByUserId(userId);
             Map<String, List<PeriodBillDO>> periodBillMapByCategory = periodBillDOS.stream().collect(Collectors.groupingBy(PeriodBillDO::getCategory));
@@ -289,9 +290,13 @@ public class BillService {
                 billStatisticsDTO.setAmount(amountByCategory);
                 res.add(billStatisticsDTO);
             });
+            BigDecimal totalAmount = res.stream().map(BillStatisticsDTO::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+            BillStatisticsDTO billStatisticsDTO = new BillStatisticsDTO();
+            billStatisticsDTO.setAmount(totalAmount);
+            billStatisticsDTO.setCategory(TOTAL_AMOUNT_CATEGORY);
+            res.add(0, billStatisticsDTO);
             return res;
-        }
-        else {
+        } else {
             Map<String, List<BillDO>> billGroupByCategoryMap = Optional.of(billDOList).orElse(
                     new ArrayList<>(0)).stream().collect(Collectors.groupingBy(BillDO::getCategory));
             Set<Map.Entry<String, List<BillDO>>> entries = billGroupByCategoryMap.entrySet();
