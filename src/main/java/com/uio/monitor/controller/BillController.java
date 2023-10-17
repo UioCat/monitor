@@ -179,12 +179,14 @@ public class BillController extends BaseController {
         @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(value = "startTime", required = false) Date startTime,
         @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(value = "endTime", required = false) Date endTime,
         @RequestParam(value = "largeItem", required = false) Boolean largeItem,
-        @RequestParam(value = "type", required = true) String type) {
+        @RequestParam(value = "type", required = true) String type,
+        @RequestParam(value = "orderBy", required = false) String orderBy) {
         pageNum = pageNum == null ? 1 : pageNum;
         pageSize = pageSize == null ? 10 : pageSize;
+        orderBy = StringUtils.isEmpty(orderBy) ? "produce_time DESC" : orderBy;
         Long userId = super.getUserId();
         PageInfo<BillDTO> billList = billService.getBillList(pageNum, pageSize, userId, category,
-                startTime, endTime, largeItem, type);
+                startTime, endTime, largeItem, type, orderBy);
         return BackMessage.success(billList);
     }
 

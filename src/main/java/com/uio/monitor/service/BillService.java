@@ -128,14 +128,14 @@ public class BillService {
      */
     public PageInfo<BillDTO> getBillList(Integer pageNum, Integer pageSize, Long userId, String category,
                                          Date startTime, Date endTime, Boolean largeItem,
-                                         String billType) {
+                                         String billType, String orderBy) {
         PageInfo<BillDTO> res = new PageInfo<>();
         res.setPageNum(pageSize);
         res.setPageSize(pageNum);
         res.setTotal(0);
 
         List<BillDO> billDOList = billManager.queryByBillType(userId, billType, pageNum, pageSize,
-                startTime, endTime, largeItem, category);
+                startTime, endTime, largeItem, category, orderBy);
         if (CollectionUtils.isEmpty(billDOList)) {
             return res;
         }

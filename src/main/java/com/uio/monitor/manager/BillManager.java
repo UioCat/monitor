@@ -58,8 +58,7 @@ public class BillManager {
      * @return
      */
     public List<BillDO> queryByBillType(Long userId, String billType, Integer pageNum, Integer pageSize,
-        Date startTime, Date endTime, Boolean largeItem,
-        String category) {
+        Date startTime, Date endTime, Boolean largeItem, String category, String orderBy) {
 
         PageHelper.startPage(pageNum, pageSize);
         BillDOExample example = new BillDOExample();
@@ -78,7 +77,7 @@ public class BillManager {
         }
         criteria.andUserIdEqualTo(userId);
         criteria.andDeletedEqualTo(false);
-        example.setOrderByClause("gmt_create desc");
+        example.setOrderByClause(orderBy);
         return billDOMapper.selectByExample(example);
     }
 
@@ -105,6 +104,7 @@ public class BillManager {
         }
         criteria.andDeletedEqualTo(false);
         criteria.andUserIdEqualTo(userId);
+        example.setOrderByClause("");
         return billDOMapper.countByExample(example);
     }
 
