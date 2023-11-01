@@ -183,7 +183,7 @@ public class BillController extends BaseController {
         @RequestParam(value = "orderBy", required = false) String orderBy) {
         pageNum = pageNum == null ? 1 : pageNum;
         pageSize = pageSize == null ? 10 : pageSize;
-        orderBy = StringUtils.isEmpty(orderBy) ? "produce_time DESC" : orderBy;
+        orderBy = StringUtils.isEmpty(orderBy) ? "gmt_modify DESC" : orderBy;
         Long userId = super.getUserId();
         PageInfo<BillDTO> billList = billService.getBillList(pageNum, pageSize, userId, category,
                 startTime, endTime, largeItem, type, orderBy);
