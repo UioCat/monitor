@@ -20,6 +20,6 @@
   <select id="queryUserCategoryInBill" parameterType="long" resultType="string">
     SELECT DISTINCT(category)
     FROM tb_bill
-    WHERE user_id = #{userId}
+    WHERE user_id = #{userId} and deleted=0
   </select>
 </mapper>
